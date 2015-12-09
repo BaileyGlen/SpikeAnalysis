@@ -33,7 +33,7 @@ for XX=1:length(DirList);
     
     
     for i=1:length(evtTrigger);
-        k=strmatch(evtTrigger{i},behaveEvt_Raw);
+        k=strmatch(evtTrigger(i),behaveEvt_Raw);
         hld{i}=behaveEvtTm_Raw(k);
     end;
     selEvt=sort(cell2mat(hld'));
