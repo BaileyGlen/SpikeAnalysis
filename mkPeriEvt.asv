@@ -18,7 +18,7 @@ function [Mtx, MnMtx, BlMtx, pEvt, pEvt_base]=mkPeriEvt(evtTrigger,clr,selDay,zS
 
 switch selDay
     case 4
-        DirList={'m13D04_03.mat';'m14D04_03.mat';'m16D04_03.mat';'m22D04_03';'m25D04_03.mat'};
+        DirList={'m13D04_03.mat';'m14D04_03.mat';'m16D04_03.mat';'m21D04_03.mat';'m22D04_03';'m25D04_03.mat'};
     case 10
         DirList={'m13D10_03.mat';'m14D10_03.mat';'m21D10_03.mat';'m22D04_03';'m25D10_03.mat'};
     case 410
@@ -46,7 +46,7 @@ for XX=1:length(DirList)
         hld=BB_ts(k);
     else    
         k=strmatch(evtTrigger,behaveEvt_Raw);
-        hld=BB_ts(k);
+        hld=BB_(k);
     end
     %selEvt=sort(cell2mat(hld'));
     selEvt = hld;
