@@ -18,7 +18,8 @@ function [Mtx, MnMtx, BlMtx, pEvt, pEvt_base]=mkPeriEvt(evtTrigger,clr,selDay,zS
 
 switch selDay
     case 4
-        DirList={'m13D04_03.mat';'m14D04_03.mat';'m16D04_03.mat';'m21D04_03';'m22D04_03';'m25D04_03.mat'};
+        DirList={'m13D04_03.mat';'m14D04_03.mat';'m16D04_03.mat';'m22D04_03';'m25D04_03.mat'};
+        %DirList={'m13D04_03.mat';'m14D04_03.mat';'m16D04_03.mat';'m21D04_03';'m22D04_03';'m25D04_03.mat'};
     case 10
         DirList={'m13D10_03.mat';'m14D10_03.mat';'m21D10_03.mat';'m22D04_03';'m25D10_03.mat'};
     case 410

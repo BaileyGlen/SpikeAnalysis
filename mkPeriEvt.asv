@@ -18,7 +18,8 @@ function [Mtx, MnMtx, BlMtx, pEvt, pEvt_base]=mkPeriEvt(evtTrigger,clr,selDay,zS
 
 switch selDay
     case 4
-        DirList={'m13D04_03.mat';'m14D04_03.mat';'m16D04_03.mat';'m21D04_03.mat';'m22D04_03';'m25D04_03.mat'};
+        DirList={'m13D04_03.mat';'m14D04_03.mat';'m16D04_03.mat';'m21D04_03';'m22D04_03';'m25D04_03.mat'};
+        %DirList={'m13D04_03.mat';'m14D04_03.mat';'m16D04_03.mat';'m21D04_03';'m22D04_03';'m25D04_03.mat'};
     case 10
         DirList={'m13D10_03.mat';'m14D10_03.mat';'m21D10_03.mat';'m22D04_03';'m25D10_03.mat'};
     case 410
@@ -36,9 +37,10 @@ for XX=1:length(DirList)
         BB_raw=strmatch('BB',behaveEvt_Raw);
         BB_ts=behaveEvtTm_Raw(BB_raw);
         k=unique(cell2mat(arrayfun (@(x) find(BB_ts>x & BB_ts<x+8,1), Press_ts, 'UniformOutput', false)));
-        hld=behaveEvtTm_Raw(k);      
+        hld=BB_ts(k);      
+        
     elseif strcmp(evtTrigger,'LL_C')
-        Press_raw=strmatch('RL_R',behaveEvt_Raw);
+        Press_raw=strmatch('LL_R',behaveEvt_Raw);
         Press_ts=behaveEvtTm_Raw(Press_raw);
         BB_raw=strmatch('BB',behaveEvt_Raw);
         BB_ts=behaveEvtTm_Raw(BB_raw);
@@ -46,7 +48,7 @@ for XX=1:length(DirList)
         hld=BB_ts(k);
     else    
         k=strmatch(evtTrigger,behaveEvt_Raw);
-        hld=BB_(k);
+        hld=behaveEvtTm_Raw(k); 
     end
     %selEvt=sort(cell2mat(hld'));
     selEvt = hld;
