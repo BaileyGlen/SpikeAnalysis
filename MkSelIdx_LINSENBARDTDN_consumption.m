@@ -36,7 +36,8 @@ for t=1:4;
 %         pEvtMtx_base=NEWpEvt_base;
 %                 
          lLim=30;
-         pre=       
+         preRange=data.xA>=0&data.xA<=5;
+         postRange=data.xA>=8&data.xA<=13;
         %% NEW BINS LISTED BELOW
         
         % if t==1;
@@ -69,13 +70,13 @@ for t=1:4;
                 
                 CellId{m}=[int2str(i) '_' int2str(j)];m=m+1;
                 Cellmean=nanmean(pEvtMtx{i}{j},1); % 
-                CellmeanPre=nanmean(Cellmean(:,1:lLim),2); % 
-                CellmeanPost=nanmean(Cellmean(:,lLim+1:lLim*2),2); % 
+                CellmeanPre=nanmean(Cellmean(:,preRange),2); % 
+                CellmeanPost=nanmean(Cellmean(:,postRange),2); % 
                 
                 %Cellvariance=nanmean(pEvtMtx{i}{j},1); % 
                 %Cellvariance_base=nanmean(pEvtMtx_base{i}{j}); % the variance is the squared stdev, so no need to square it later on.
-                CellvariancePre=nanvar(Cellmean(:,1:lLim),[],2); % 
-                CellvariancePost=nanvar(Cellmean(:,lLim+1:lLim*2),[],2); % 
+                CellvariancePre=nanvar(Cellmean(:,preRange),[],2); % 
+                CellvariancePost=nanvar(Cellmean(:,postRange),[],2); % 
                 
                 %sdPre=nanstd(CellvariancePre); % 
                 %sdCs=nanstd(CellvariancePost); % 
@@ -123,8 +124,8 @@ for t=1:4;
                     surMtx=reshape(x,size(CellmeanOrig));
                     
                     
-                    surMtx_pre=surMtx(:,1:lLim);
-                    surMtx_post=surMtx(:,lLim+1:lLim*2);
+                    surMtx_pre=surMtx(:,preRange);
+                    surMtx_post=surMtx(:,postRange);
                   
                     
                     CellmeanPre=nanmean(surMtx_pre,2);

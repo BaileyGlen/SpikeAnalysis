@@ -8,13 +8,17 @@ imagesc(data.xA,1:size(sorted,1),(zscore(data.(VarList{varIDX}).MlMtx(idx,:)')')
 
 %% this is the basic 4 way PCA plot. this could be adapted to be useful for lots of things.
 VarList={'LL04','RL04','LL10','RL10'};
-PC = 4;
+PC = 1;
 figure;
 for varIDX=1:4
     subplot(2,2,varIDX);
     [sorted,idx] = sort(data.(VarList{varIDX}).PCA.score(:,PC));
     imagesc(data.xA,1:size(sorted,1),(zscore(data.(VarList{varIDX}).MlMtx(idx,:)')'),[-2 2]);
     title(['PC: ' num2str(PC) '   ' VarList{varIDX}]);
+end
+%% get the zscore data for outputting for stats
+for varIDX=1:4
+    zDataOutput{varIDX}=zscore(data.(VarList{varIDX}).MlMtx')';
 end
 %% this is the overall means, zscored - plotted as 4 subplots
 clearvars ('-except', 'data');
@@ -34,7 +38,7 @@ for varIDX=1:4
     plot(downsample(data.xA,1),downsample(y+yStdErr,1),'marker','none','markersize',3,'linestyle',':','LineWidth',.5);
     %plot(data.xA,y+yStdErr,'linestyle',':');
     title(['Overall zscore: ' VarList{varIDX}]);
-    axis([-3 10 -1 1])
+    axis([-3 3 -1 1])
 end
 %% overal means zscored - plotted as 1 plot
 clearvars ('-except', 'data');
@@ -56,7 +60,7 @@ end
     plot(downsample(data.xA,1),downsample(y+yStdErr,1),'marker','none','markersize',3,'linestyle',':','LineWidth',.5);
     %plot(data.xA,y+yStdErr,'linestyle',':');
     title(['Overall zscore']);
-    axis([-3 10 -1 1]);
+    axis([-3 3 -1 1]);
     legend (VarList{:});
 
 %% custom sorting  0 -> .5s
@@ -134,6 +138,7 @@ for varIDX=1:4
     [sorted, idx] = sort(mean( tempZ(:,data.xA>=-3 & data.xA<=0),2)- mean(tempZ(:,data.xA>=0 & data.xA<=3),2 ));
     imagesc(data.xA,1:size(sorted,1),flipud(zscore(data.(VarList{varIDX}).MlMtx(idx,:)')'),[-2 2]);
     title(['-3>0 vs 0>3 zscore sorted: ' VarList{varIDX}]);
+    data.(VarList{varIDX}).mySort.idx=idx;
 end
 %% Was also thinking that once you're good with the d prime analysis,  could compare latencies after press to change in sig modulated cells
 %% Getting time between rf and bb
@@ -192,7 +197,7 @@ for XX=1:length(DirList)
         end
     end
 end
-%% Getting the pie chart data from the dprime
+%% Set Inc and Decreasers from DPrime...This is for RFDelivery
 VarList={'LL04','RL04','LL10','RL10'};
 for varIDX=1:4
     tempZ=zscore(data.(VarList{varIDX}).MlMtx')';
@@ -201,14 +206,179 @@ for varIDX=1:4
     newIDs=sort(CIDPIdx(SIG));
     %     tempZ= zscore(data.(VarList{varIDX}).MlMtx')';
     %     [sorted, idx] = sort(mean( tempZ(:,data.xA>=-3 & data.xA<=0),2)- mean(tempZ(:,data.xA>=0 & data.xA<=3),2 ));
-    
-    tempZ= zscore(data.(VarList{varIDX}).MlMtx')';
-    [sorted, idx] = sort(mean( tempZ(newIDs,data.xA>=-3 & data.xA<=0),2)- mean(tempZ(newIDs,data.xA>=0 & data.xA<=3),2 ));
-    data.(VarList{varIDX}).DPrime.First3.pieData(1,1)=length(find(sorted<0));
-    data.(VarList{varIDX}).DPrime.First3.pieData(1,3)=length(find(sorted>0));
+    diffmean=mean( tempZ(newIDs,data.xA>=-3 & data.xA<=0),2)- mean(tempZ(newIDs,data.xA>=0 & data.xA<=3),2 );
+    data.(VarList{varIDX}).DPrime.First3.pieData(1,1)=length(find(diffmean<0));
+    data.(VarList{varIDX}).DPrime.First3.pieData(1,3)=length(find(diffmean>0));
     data.(VarList{varIDX}).DPrime.First3.pieData(1,2)=size(tempZ,1)-size(SIG,1);
+    data.(VarList{varIDX}).DPrime.First3.IncZ=tempZ(newIDs((diffmean<0)),:);
+    data.(VarList{varIDX}).DPrime.First3.DecZ=tempZ(newIDs((diffmean>0)),:);
+    data.(VarList{varIDX}).DPrime.First3.IncIDs=newIDs((diffmean<0));
+    data.(VarList{varIDX}).DPrime.First3.DecIDs=newIDs((diffmean>0));
+    data.(VarList{varIDX}).DPrime.First3.NCIDs=sort(CIDPIdx(1:SIG(1)-1));
+    data.(VarList{varIDX}).DPrime.First3.NCZ=tempZ(data.(VarList{varIDX}).DPrime.First3.NCIDs);
+    diffmean=mean( tempZ(CIDPIdx,data.xA>=-3 & data.xA<=0),2)- mean(tempZ(CIDPIdx,data.xA>=0 & data.xA<=3),2 );
+    diffmean=mean( tempZ(CIDPIdx,data.xA>=-3 & data.xA<=0),2)- mean(tempZ(CIDPIdx,data.xA>=0 & data.xA<=3),2 );
+    diffdecidx=find(diffmean<=0);
+    diffincidx=find(diffmean>0);
+    data.(VarList{varIDX}).DPrime.First3.overallSort=[flipud(diffincidx);diffdecidx];
 end
 
+%% Set Inc and Decreasers from DPrime...This is for RFCon
+VarList={'LL04','RL04','LL10','RL10'};
+for varIDX=1:4
+    tempZ=zscore(data.(VarList{varIDX}).MlMtx')';
+    SIG=data.(VarList{varIDX}).DPrime.First3.SIG;
+    CIDPIdx=data.(VarList{varIDX}).DPrime.First3.CIDPIdx;
+    newIDs=sort(CIDPIdx(SIG));
+    %     tempZ= zscore(data.(VarList{varIDX}).MlMtx')';
+    %     [sorted, idx] = sort(mean( tempZ(:,data.xA>=-3 & data.xA<=0),2)- mean(tempZ(:,data.xA>=0 & data.xA<=3),2 ));
+    diffmean=mean( tempZ(newIDs,data.xA>=0 & data.xA<=5),2)- mean(tempZ(newIDs,D),2 );
+    data.(VarList{varIDX}).DPrime.First3.pieData(1,1)=length(find(diffmean<0));
+    data.(VarList{varIDX}).DPrime.First3.pieData(1,3)=length(find(diffmean>0));
+    data.(VarList{varIDX}).DPrime.First3.pieData(1,2)=size(tempZ,1)-size(SIG,1);
+    data.(VarList{varIDX}).DPrime.First3.IncZ=tempZ(newIDs((diffmean<0)),:);
+    data.(VarList{varIDX}).DPrime.First3.DecZ=tempZ(newIDs((diffmean>0)),:);
+    data.(VarList{varIDX}).DPrime.First3.IncIDs=newIDs((diffmean<0));
+    data.(VarList{varIDX}).DPrime.First3.DecIDs=newIDs((diffmean>0));
+    data.(VarList{varIDX}).DPrime.First3.NCIDs=sort(CIDPIdx(1:SIG(1)-1));
+    data.(VarList{varIDX}).DPrime.First3.NCZ=tempZ(data.(VarList{varIDX}).DPrime.First3.NCIDs);
+    diffmean=mean( tempZ(CIDPIdx,data.xA>=0 & data.xA<=5),2)- mean(tempZ(CIDPIdx,data.xA>=8 & data.xA<=13),2 );
+    diffdecidx=find(diffmean<=0);
+    diffincidx=find(diffmean>0);
+    data.(VarList{varIDX}).DPrime.First3.overallSort=[flipud(diffincidx);diffdecidx];
+    figure; imagesc(flipud(tempZ(CIDPIdx(data.(VarList{varIDX}).DPrime.First3.overallSort),:)),[-2 2]);
+end
+%% DPrime Plot Inc and Dec
+clearvars ('-except', 'data');
+VarList={'LL04','RL04','LL10','RL10'};
+%PC = 4;
+figure;
+for varIDX=1:4
+    zData=data.(VarList{varIDX}).DPrime.First3.IncZ;
+    y(:,varIDX,1)=nanmean(zData);
+    yStdErr(:,varIDX,1)=nanstd(zData)/sqrt(size(zData,1));
+    zData=data.(VarList{varIDX}).DPrime.First3.DecZ;
+    y(:,varIDX,2)=nanmean(zData);
+    yStdErr(:,varIDX,2)=nanstd(zData)/sqrt(size(zData,1));
+end
+for condIDX=1:2
+    subplot(2,1,condIDX);
+    plot(data.xA,y(:,:,condIDX),'linewidth',2.5);
+    hold on
+    %plot(downsample(data.xA,1),downsample(y-yStdErr,1),'marker','.','markersize',3,'linestyle','none');
+    plot(downsample(data.xA,1),downsample(y(:,:,condIDX)-yStdErr(:,:,condIDX),1),'marker','none','markersize',3,'linestyle',':','LineWidth',.5);
+    plot(downsample(data.xA,1),downsample(y(:,:,condIDX)+yStdErr(:,:,condIDX),1),'marker','none','markersize',3,'linestyle',':','LineWidth',.5);
+    %plot(data.xA,y+yStdErr,'linestyle',':');
+    title(['Overall zscore']);
+    axis([-3 13 -2 2]);
+    legend (VarList{:});
+end
+%% Dprime Output for Stats
+VarList={'LL04','RL04','LL10','RL10'};
+TimePointList={'E' 'E' 'L' 'L'};
+IDArrayInc=[data.LL04.DPrime.First3.IncIDs;data.RL04.DPrime.First3.IncIDs;...
+    data.LL10.DPrime.First3.IncIDs+51;data.RL10.DPrime.First3.IncIDs+51];
+IDArrayDec=[data.LL04.DPrime.First3.DecIDs;data.RL04.DPrime.First3.DecIDs;...
+    data.LL10.DPrime.First3.DecIDs+51;data.RL10.DPrime.First3.DecIDs+51];
+TimePointArrayInc=cell(length(IDArrayInc),1);
+TimePointArrayDec=cell(length(IDArrayDec),1);
+DataArrayInc=NaN(length(IDArrayInc),length(data.xA));
+DataArrayDec=NaN(length(IDArrayDec),length(data.xA));
+xInc=1;
+xDec=1;
+for varIDX=1:4
+    tempInc=length(data.(VarList{varIDX}).DPrime.First3.IncIDs);
+    tempDec=length(data.(VarList{varIDX}).DPrime.First3.DecIDs);
+    TimePointArrayInc(xInc:xInc+tempInc-1)={TimePointList{varIDX}};
+    TimePointArrayDec(xDec:xDec+tempDec-1)={TimePointList{varIDX}};
+    DataArrayInc(xInc:xInc+tempInc-1,:)=data.(VarList{varIDX}).DPrime.First3.IncZ;
+    DataArrayDec(xDec:xDec+tempDec-1,:)=data.(VarList{varIDX}).DPrime.First3.DecZ;
+    xInc=xInc+tempInc;
+    xDec=xDec+tempDec;
+end
+%% New! Dprime Output for Stats
+VarList={'LL04','RL04','LL10','RL10'};
+TimePointList={'E' 'E' 'L' 'L'};
+ScheduleList={'RI' 'RR' 'RI' 'RR'}
+DPrime.IDArrayInc=[data.LL04.DPrime.First3.IncIDs;data.RL04.DPrime.First3.IncIDs;...
+    data.LL10.DPrime.First3.IncIDs+51;data.RL10.DPrime.First3.IncIDs+51];
+DPrime.IDArrayDec=[data.LL04.DPrime.First3.DecIDs;data.RL04.DPrime.First3.DecIDs;...
+    data.LL10.DPrime.First3.DecIDs+51;data.RL10.DPrime.First3.DecIDs+51];
+DPrime.TimePointArrayInc=cell(length(DPrime.IDArrayInc),1);
+DPrime.TimePointArrayDec=cell(length(DPrime.IDArrayDec),1);
+DPrime.ScheduleArrayInc=cell(length(DPrime.IDArrayInc),1);
+DPrime.ScheduleArrayDec=cell(length(DPrime.IDArrayDec),1);
+DPrime.DataArrayInc=NaN(length(DPrime.IDArrayInc),length(data.xA));
+DPrime.DataArrayDec=NaN(length(DPrime.IDArrayDec),length(data.xA));
+length1=length(data.LL04.DPrime.First3.CIDPIdx);
+length2=length(data.LL10.DPrime.First3.CIDPIdx);
+DPrime.Category.IDArray=[1:length1 length1+1:length1+length2]';
+DPrime.Category.TimePoint=cell(length1+length2,1);
+DPrime.Category.Cat1=cell(length1+length2,1);
+DPrime.Category.Cat2=cell(length1+length2,1);
+DPrime.Category.TimePoint(1:length1) = {'E'};
+DPrime.Category.TimePoint(length1+1:length1+length2) = {'L'};
+xInc=1;
+xDec=1;
+for varIDX=1:4
+    if varIDX<=2
+        cellOffset=0;
+    else
+        cellOffset=length(data.LL04.DPrime.First3.CIDPIdx);
+    end
+    if varIDX==2|| varIDX==4
+        CatIDX='Cat2';
+    else
+        CatIDX='Cat1';
+    end
+    DPrime.Category.(CatIDX)(data.(VarList{varIDX}).DPrime.First3.IncIDs+cellOffset)={'I'};
+    DPrime.Category.(CatIDX)(data.(VarList{varIDX}).DPrime.First3.DecIDs+cellOffset)={'D'};
+    DPrime.Category.(CatIDX)(data.(VarList{varIDX}).DPrime.First3.NCIDs+cellOffset)={'N'};
+    
+    
+    tempInc=length(data.(VarList{varIDX}).DPrime.First3.IncIDs);
+    tempDec=length(data.(VarList{varIDX}).DPrime.First3.DecIDs);
+    DPrime.tempInc=length(data.(VarList{varIDX}).DPrime.First3.IncIDs);
+    DPrime.tempDec=length(data.(VarList{varIDX}).DPrime.First3.DecIDs);
+    DPrime.TimePointArrayInc(xInc:xInc+tempInc-1)={TimePointList{varIDX}};
+    DPrime.TimePointArrayDec(xDec:xDec+tempDec-1)={TimePointList{varIDX}};
+    DPrime.ScheduleArrayInc(xInc:xInc+tempInc-1)={ScheduleList{varIDX}};
+    DPrime.ScheduleArrayDec(xDec:xDec+tempDec-1)={ScheduleList{varIDX}};
+    DPrime.DataArrayInc(xInc:xInc+tempInc-1,:)=data.(VarList{varIDX}).DPrime.First3.IncZ;
+    DPrime.DataArrayDec(xDec:xDec+tempDec-1,:)=data.(VarList{varIDX}).DPrime.First3.DecZ;
+    xInc=xInc+tempInc;
+    xDec=xDec+tempDec;
+end
+
+%% DPrime Cell overlappage
+overlap(1,1)=length(intersect(data.LL04.DPrime.First3.IncIDs,data.RL04.DPrime.First3.IncIDs))/length(data.LL04.DPrime.First3.IncIDs);
+overlap(2,1)=length(intersect(data.LL04.DPrime.First3.IncIDs,data.RL04.DPrime.First3.IncIDs))/length(data.RL04.DPrime.First3.IncIDs);
+overlap(3,1)=length(intersect(data.LL10.DPrime.First3.IncIDs,data.RL10.DPrime.First3.IncIDs))/length(data.LL10.DPrime.First3.IncIDs);
+overlap(4,1)=length(intersect(data.LL10.DPrime.First3.IncIDs,data.RL10.DPrime.First3.IncIDs))/length(data.RL10.DPrime.First3.IncIDs);
+
+overlap(1,2)=length(intersect(data.LL04.DPrime.First3.DecIDs,data.RL04.DPrime.First3.DecIDs))/length(data.LL04.DPrime.First3.DecIDs);
+overlap(2,2)=length(intersect(data.LL04.DPrime.First3.DecIDs,data.RL04.DPrime.First3.DecIDs))/length(data.RL04.DPrime.First3.DecIDs);
+overlap(3,2)=length(intersect(data.LL10.DPrime.First3.DecIDs,data.RL10.DPrime.First3.DecIDs))/length(data.LL10.DPrime.First3.DecIDs);
+overlap(4,2)=length(intersect(data.LL10.DPrime.First3.DecIDs,data.RL10.DPrime.First3.DecIDs))/length(data.RL10.DPrime.First3.DecIDs);
+%% DPrime Cell overlappage reversed
+overlap(1,1)=length(intersect(data.LL04.DPrime.First3.IncIDs,data.RL04.DPrime.First3.DecIDs))/length(data.LL04.DPrime.First3.IncIDs);
+overlap(2,1)=length(intersect(data.LL04.DPrime.First3.DecIDs,data.RL04.DPrime.First3.IncIDs))/length(data.RL04.DPrime.First3.IncIDs);
+overlap(3,1)=length(intersect(data.LL10.DPrime.First3.IncIDs,data.RL10.DPrime.First3.DecIDs))/length(data.LL10.DPrime.First3.IncIDs);
+overlap(4,1)=length(intersect(data.LL10.DPrime.First3.DecIDs,data.RL10.DPrime.First3.IncIDs))/length(data.RL10.DPrime.First3.IncIDs);
+
+overlap(1,2)=length(intersect(data.LL04.DPrime.First3.DecIDs,data.RL04.DPrime.First3.IncIDs))/length(data.LL04.DPrime.First3.DecIDs);
+overlap(2,2)=length(intersect(data.LL04.DPrime.First3.IncIDs,data.RL04.DPrime.First3.DecIDs))/length(data.RL04.DPrime.First3.DecIDs);
+overlap(3,2)=length(intersect(data.LL10.DPrime.First3.DecIDs,data.RL10.DPrime.First3.IncIDs))/length(data.LL10.DPrime.First3.DecIDs);
+overlap(4,2)=length(intersect(data.LL10.DPrime.First3.IncIDs,data.RL10.DPrime.First3.DecIDs))/length(data.RL10.DPrime.First3.DecIDs);
+%% DPrime Cell overlappage - either direction
+LL04All=[data.LL04.DPrime.First3.IncIDs;data.LL04.DPrime.First3.DecIDs];
+RL04All=[data.RL04.DPrime.First3.IncIDs;data.RL04.DPrime.First3.DecIDs];
+LL10All=[data.LL10.DPrime.First3.IncIDs;data.LL10.DPrime.First3.DecIDs];
+RL10All=[data.RL10.DPrime.First3.IncIDs;data.RL10.DPrime.First3.DecIDs];
+overlapAll(1,1)=length(intersect(LL04All,RL04All))/length(LL04All);
+overlapAll(2,1)=length(intersect(LL04All,RL04All))/length(RL04All);
+overlapAll(1,2)=length(intersect(LL10All,RL10All))/length(LL10All);
+overlapAll(2,2)=length(intersect(LL10All,RL10All))/length(RL10All);
 %% Getting the pie charts
 VarList={'LL04','RL04','LL10','RL10'};
 figure;
@@ -249,6 +419,7 @@ for varIDX=1:4
     output.DecPost1_7(varIDX+4,:)=std(data.(VarList{varIDX}).mySort.DecZPost1_7)/sqrt(numCells);
 end
 %% lines
+figure;
 CondList={'Inc','Dec'};
 meanRange=1:4;
 stderrRange=5:8;

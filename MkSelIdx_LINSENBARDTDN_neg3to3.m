@@ -152,8 +152,8 @@ for t=1:4;
         %% plotting actual versus surrogate data - NEED TO REMOVE NANS AND INFS HERE; THEN NEED TO USE SURMTX TO GET STD AND MEAN TO GET CI
         
         surMtx=cell2mat(surSlctIdx);        
-        surMtx_mean=mean(surMtx);        
-        surMtx_std=std(surMtx);
+        surMtx_mean=nanmean(surMtx);        
+        surMtx_std=nanstd(surMtx);
         
         % GETTING THE UPPER CI FOR EACH NEURON AND THEN THE MEAN OF THE UPPER CI
         %CI=((surMtx_mean(:))+(surMtx_std(:)*2.575));% 
@@ -204,8 +204,8 @@ for t=1:4;
 %         figure;
 %         scatter(sortData,rocMtx);
         
-        cd 'D:\Users\Bailey\Documents\Dropbox\Mouse MEA\Mouse MEA\Mat\CL';
-        save(sprintf('MkSel_Res_BAILEY__%02d',t));
+ %       cd 'D:\Users\Bailey\Documents\Dropbox\Mouse MEA\Mouse MEA\Mat\CL';
+ %       save(sprintf('MkSel_Res_BAILEY__%02d',t));
 %        savefig(sprintf('FIG_NODRINK%d.fig',t),h); % will create FIG1, FIG2,...
         data.(crtVar).DPrime.First3.CellId = CellId;
         data.(crtVar).DPrime.First3.SIG = SIG;        
