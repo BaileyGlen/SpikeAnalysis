@@ -23,7 +23,7 @@ fighandle=figure;
 %newStdErr=permute(yStdErr,[1,2,3]);
 [hl, hp]=boundedline(data.xA, y, yStdErr ,'cmap',newcmap, 'alpha');
 %title(['Overall zscore']);
-axis([-3 3 -.6 .8]);
+axis([-3 3 -.8 1]);
 %legend (VarList{:});
 set(hl,'linewidth',2.5);
 set(fighandle, 'Position', [100, 100, 350, 250]);
@@ -39,7 +39,7 @@ set(fighandle, 'Position', [100, 100, 350, 250]);
 %     title(['Overall zscore']);
 %     axis([-3 3 -1 1]);
 %     legend (VarList{:});
-%% Inc and Dec
+%% Inc and Dec 
 fighandle=figure;
 CondList={'IncZ','DecZ'};
 meanRange=1:4;
@@ -60,14 +60,12 @@ for condIDX=1:2
     title(['Reinforcer Consumption Modulated Cells: ' tmpStr]);
     set(hl,'linewidth',2.5);
     plot([-3 13],[0 0],'linestyle','--','color',[.5 .5 .5],'linewidth',1);
-    axis([-3 5 -1.5 2.5]);
+    axis([-3 6 -1.5 2.5]);
     
     %h_legend=legend (VarList{:});
     %set(h_legend,'FontSize',8,'Orientation','horizontal','Location','best') 
     
 end
-
-%%heatmap
 %% DPrimeSorting Heatmap
 VarList={'LL04','RL04','LL10','RL10'};
 %PC = 4;
@@ -76,9 +74,9 @@ for varIDX=1:4
     subplot(2,2,varIDX);
     tempZ= zscore(data.(VarList{varIDX}).MlMtx')';
     set(fighandle, 'Position', [100, 100, 350, 250]);
-    imagesc(data.xA,1:size(tempZ,1),tempZ(data.(VarList{varIDX}).DPrime.First3.CIDPIdx(data.(VarList{varIDX}).DPrime.First3.overallSort),:),[-2 2]);
+    imagesc(data.xA,1:size(tempZ,1),tempZ(data.(VarList{varIDX}).DPrime.First3.overallSort,:),[-2 2]);
     %title(['DPrime sorted: ' VarList{varIDX}]);
-    axis([-3 5 1 size(tempZ,1)]);
+    axis([-3 6 1 size(tempZ,1)]);
     set(gca,'YTick',[1 size(tempZ,1)])
 end
 
