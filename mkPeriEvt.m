@@ -18,9 +18,10 @@ function [Mtx, MnMtx, BlMtx, pEvt, pEvt_base]=mkPeriEvt(evtTrigger,clr,selDay,zS
 
 switch selDay
     case 4
-        DirList={'m13D04_03.mat';'m14D04_03.mat';'m16D04_03.mat';'m21D04_03';'m22D04_03';'m25D04_03.mat'};
+        %DirList={'m13D04_03.mat';'m14D04_03.mat';'m16D04_03.mat';'m22D04_03';'m25D04_03.mat'};
+        DirList={'m13D04_03.mat';'m14D04_03.mat';'m16D04_03.mat';'m21D04_03';'m22D04_03'};
     case 10
-        DirList={'m13D10_03.mat';'m14D10_03.mat';'m21D10_03.mat';'m22D04_03';'m25D10_03.mat'};
+        DirList={'m13D04_03.mat';'m14D10_03.mat';'m25D10_03.mat'};
     case 410
         DirList={'m13D04_03.mat';'m14D04_03.mat';'m16D04_03.mat';'m21D04_03.mat';'m22D04_03.mat';'m25D04_03.mat';...
             'm13D10_03.mat';'m14D04_03.mat';'m21D10_03.mat';'m22D10_03.mat';'m25D10_03.mat'};
@@ -45,6 +46,22 @@ for XX=1:length(DirList)
         BB_ts=behaveEvtTm_Raw(BB_raw);
         k=unique(cell2mat(arrayfun (@(x) find(BB_ts>x & BB_ts<x+8,1), Press_ts, 'UniformOutput', false)));
         hld=BB_ts(k);
+    elseif strcmp(evtTrigger,'RL_I')
+        Press_raw=strmatch('RL_U',behaveEvt_Raw);
+        Press_ts=behaveEvtTm_Raw(Press_raw);
+        Other_raw= cellfun(@(y) max(y), cellfun(@(x) strcmp({'BB' 'RL_R' 'LL_R' 'RL_U' 'LL_U'},x),behaveEvt_Raw,'UniformOutput', false) );
+        Other_ts=behaveEvtTm_Raw(Other_raw);
+        k=cellfun(@(y) isempty(y), arrayfun (@(x) find(Other_ts>(x-3) & Other_ts<(x+3) & abs(Other_ts-x)>.0001), Press_ts, 'UniformOutput', false)  );
+        hld=Press_ts(k);      
+        postEvt=3;
+    elseif strcmp(evtTrigger,'LL_I')
+        Press_raw=strmatch('LL_U',behaveEvt_Raw);
+        Press_ts=behaveEvtTm_Raw(Press_raw);
+        Other_raw= cellfun(@(y) max(y), cellfun(@(x) strcmp({'BB' 'RL_R' 'LL_R' 'RL_U' 'LL_U'},x),behaveEvt_Raw,'UniformOutput', false) );
+        Other_ts=behaveEvtTm_Raw(Other_raw);
+        k=cellfun(@(y) isempty(y), arrayfun (@(x) find(Other_ts>(x-3) & Other_ts<(x+3) & abs(Other_ts-x)>.0001), Press_ts, 'UniformOutput', false)  );
+        hld=Press_ts(k);   
+        postEvt=3;
     else    
         k=strmatch(evtTrigger,behaveEvt_Raw);
         hld=behaveEvtTm_Raw(k); 
@@ -110,10 +127,10 @@ end;
 for i=1:length(DirList);
     dMtx{i,1}=cell2mat(pEvt{i});
     for j=1:length(pEvt{i})
-        MndMtx{i,1}(j,:)=nanmean(pEvt{i}{j});
+        MndMtx{i,1}(j,:)=nanmean(pEvt{i}{j},1);
     end
     for j=1:length(pEvt_base{i})
-        BldMtx{i,1}(j,:)=nanmean(pEvt_base{i}{j});
+        BldMtx{i,1}(j,:)=nanmean(pEvt_base{i}{j},1);
     end
 end
 Mtx=cell2mat(dMtx);

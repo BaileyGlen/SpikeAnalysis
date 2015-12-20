@@ -9,12 +9,13 @@ mnSpk = 0;
 mxSpk=1000;
 rasterBin=.1;      % Size of bines for raster
 preEvt=3;            % time prior to Event in sec
-postEvt=10;           % time post Event in sec
+postEvt=3;           % time post Event in sec
 PLOT=0;
 nmPC=4;
 tempRange = [1:((preEvt+postEvt)/rasterBin)+1];
 DayVar={4,4,10,10};
-EventVar={'LL_R','RL_R','LL_R','RL_R'};
+EventVar={'LL_I','RL_I','LL_I','RL_I'};
+%EventVar={'LL_R','RL_R','LL_R','RL_R'};
 %EventVar={'LL_C','RL_C','LL_C','RL_C'};
 StructVar={'LL04','RL04','LL10','RL10'};
 %% Create the data Structure - Reinforced
