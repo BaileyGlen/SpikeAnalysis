@@ -57,10 +57,10 @@ for condIDX=1:2
     else
         tmpStr='Decreasing';
     end
-    title(['Reinforcer Consumption Modulated Cells: ' tmpStr]);
+%    title(['Reinforcer Consumption Modulated Cells: ' tmpStr]);
     set(hl,'linewidth',2.5);
     plot([-3 13],[0 0],'linestyle','--','color',[.5 .5 .5],'linewidth',1);
-    axis([-3 6 -1.5 2.5]);
+    axis([-3 5 -1.5 2.5]);
     
     %h_legend=legend (VarList{:});
     %set(h_legend,'FontSize',8,'Orientation','horizontal','Location','best') 
