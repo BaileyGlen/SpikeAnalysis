@@ -19,7 +19,7 @@ ParseInput;
 % p.addOptional('var2','',@ischar);
 % p.addOptional('range',[3 3], @isnumeric);
 % p.addParamValue('opt','none',@ischar);
-% 
+%
 % p.parse(eventCellArray, varargin{:});%varargin or varargin{} won't work
 % Results=p.Results;
 %% old attempt at parser
@@ -50,28 +50,30 @@ ParseInput;
     function ParseInput()
         var2bool=false;
         optbool=false;
-        
+        needRangebool=false;
+        rangebool=false;
         %%%%%%%%%%%%%%%
         %eventCellArray
         %%%%%%%%%%%%%%%
-               
+        
         if ~iscell(eventCellArray)%validate eventArraystruct is a cell array
-            error(['EventCellArray is not a cell and is instead a ' class(eventCellArray)]);        
+            error(['EventCellArray is not a cell and is instead a ' class(eventCellArray)]);
         elseif ~xor(size(eventCellArray,1)~=2, size(eventCellArray,2)~=2) ...
                 || isempty(eventCellArray{1}) || isempty(eventCellArray{2})%2 components not empty components
-            error(['EventCellArray has too few or empty cells ' class(eventCellArray)]);        
+            error(['EventCellArray has too few or empty cells ' class(eventCellArray)]);
         elseif ~isnumeric(eventCellArray{1})%the first of which is number
             error(['EventCellArray{1} is not a numeric vector and is instead a ' class(eventCellArray)]);
         elseif ~iscell(eventCellArray{2}) %and the second of which is a cell
             error(['EventCellArray{2} is not a cell and is instead a ' class(eventCellArray)]);
         elseif ~ischar(eventCellArray{2}{1})  %of strings
             error(['EventCellArray is not a cell of strings and is instead a cell of ' class(eventCellArray)]);
-        end 
-
+        end
+        
         %%%%%%%%%%%%%%%%
         % var1
         %%%%%%%%%%%%%%%%
         if ~ischar(var1)||isempty(var1)
+            if iscell(
             error(['var1 can not be empty and should be a char array ' class(eventCellArray)]);
         end
         
@@ -88,13 +90,34 @@ ParseInput;
         % 'opt'
         %%%%%%%%%%%%%%%%
         if ~ischar(varargin{1+var2bool})||isempty(varargin{1+var2bool})
-            error(['var2/opt can not be empty and should be a char array ' class(eventCellArray)]);
-        elseif ~strcmp(varargin{1},'opt')&&~strcmp(varargin{1},'range')
-            var2=varargin{1};
-            var2Bool=true;
-        end
+            error(['opt can not be empty and should be a char array but is a ' class(eventCellArray)]);
+        elseif ~strcmp(varargin{1+var2bool},'opt')
+            error([varargin{1+var2bool} ' was not expected, opt was.']);
+        elseif ~ischar(varargin{2+var2bool})||isempty(varargin{2+var2bool})
+            error(['opt2 can not be empty and should be a char array but is a ' class(eventCellArray)]);
+        else switch varargin{2+var2bool}
+                case 'none'
+                    optbool=true;
+                    opt=varargin{2+var2bool};
+                case 'iso'
+                    optbool=true;
+                    opt=varargin{2+var2bool};
+                case 'firstAfter'
+                    optbool=true;
+                    opt=varargin{2+var2bool};
+                case 'lastBefore'
+                    optbool=true;
+                    opt=varargin{2+var2bool};
+                otherwise
+                    error([varargin{2+var2bool} ' is not a valid option input.']);
+                    %is it possible to event get here? seems out of index
+            end
+        end    var2=varargin{1};
         
+        var2Bool=true;
     end
+
+end
 end
 %
 %
