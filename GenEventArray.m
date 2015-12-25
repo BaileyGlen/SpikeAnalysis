@@ -1,4 +1,4 @@
-function [] = GenEventArray( eventCellArray,var1, varargin )
+function [newEventTS,varargout] = GenEventArray( eventCellArray,var1, varargin  )
 %UNTITLED This gets a variety of event timings. Provide the event train,
 %the component(s) you are looking for, and the relationship between them
 %   GenEventArray is expecting the event array provided by code written
@@ -12,12 +12,85 @@ function [] = GenEventArray( eventCellArray,var1, varargin )
 
 
 %% Handle the variable number of incoming arguments
+opt='none';
+optRange=[];
+var2='';
 ParseInput;
+switch opt
+    case 'none'
+        % Passes all var1 back. Be sure to process as cell or char
+        var1TS=getvarTS(var1);
+        %         if ~isempty(var2)
+        %             var2TS=getvarTS(var2);
+        %         end
+        %         newEventTS=sort([var1TS var2TS]);
+        newEventTS=var1TS;
+    case 'iso'
+        if isempty(optRange)
+            optRange=[-3 3];
+        end
+        % Gets all of vari one. then makes sure its isolated from var2 by range
+        var1TS=getvarTS(var1);
+        if ~isempty(var2)
+            var2TS=getvarTS(var2);
+        else error('var2 is required for ISO to work');
+        end
+        newEventTS=var1TS(cellfun(@isempty, ...
+            arrayfun(@(x) find(var2TS>(x+optRange(1)) & var2TS<(x+optRange(2)) & ...
+            abs(var2TS-x)>.0001), var1TS, 'UniformOutput', false)));
+    case 'firstAfter'
+        % Gets all of vari one, then looks for any of first within range after
+        if isempty(optRange)
+            optRange=[0 8];
+        end
+        % Gets all of vari one. then makes sure its isolated from var2 by range
+        var1TS=getvarTS(var1);
+        if ~isempty(var2)
+            var2TS=getvarTS(var2);
+        else error('var2 is required for ISO to work');
+        end
+        
+        % Get the first var2 following each var1. then make sure there is
+        % only 1 of each var 2
+        newEventTS=var2TS(unique(cell2mat(...
+            arrayfun(@(x) find(var2TS>x+optRange(1) & var2TS<x+optRange(2),1), ...
+            var1TS, 'UniformOutput', false))));
+        %%%%%%%%%%%%%%%%%%%%%
+        % check for stats out
+        %%%%%%%%%%%%%%%%%%%%%
+        
+        if nargout==2
+        % Get the closes('last') var1, to each newEventTS, allowing for lag
+        % measurement
+        firstEventTS=var1TS(unique(cell2mat(...
+            arrayfun(@(x) find(var1TS<x-optRange(1) & var1TS>x-optRange(2),1,'last'), ...
+            newEventTS, 'UniformOutput', false))));
+        stats.Lag=newEventTS-firstEventTS;
+        %stats.IgnoredVar1=length(var1TS)-length(newEventTS);
+        varargout{1}=stats;
+        end
+    case 'lastBefore'
+        % what is this even?
+        display ('lastbefore has not been implemented yet');
+        
+    otherwise
+        error([varargin{optVarIdx+1} ' is not a valid option input.']);
+end
+
+    function [curVarTS] = getvarTS (curVar)
+        if iscell(curVar)
+            curVarIdx=any(cell2mat(cellfun(@(x) strcmp(x,eventCellArray{2}),curVar,'UniformOutput',false)),2);
+            curVarTS=eventCellArray{1}(curVarIdx);
+        else
+            curVarIdx=any(strcmp(curVar,eventCellArray{2}),2);
+            curVarTS=eventCellArray{1}(curVarIdx);
+        end
+    end
 % p=inputParser;
 % p.addRequired('eventCellArray',@(x) length(x)>0 && iscell(x));
 % p.addRequired('var1',@ischar);
 % p.addOptional('var2','',@ischar);
-% p.addOptional('range',[3 3], @isnumeric);
+% p.addOptional('optRange',[3 3], @isnumeric);
 % p.addParamValue('opt','none',@ischar);
 %
 % p.parse(eventCellArray, varargin{:});%varargin or varargin{} won't work
@@ -48,10 +121,10 @@ ParseInput;
 % end
 %%
     function ParseInput()
-        var2bool=false;
-        optbool=false;
-        needRangebool=false;
-        rangebool=false;
+        var2Bool=false;
+        optBool=false;
+        needRangeBool=false;
+        optRangeBool=false;
         %%%%%%%%%%%%%%%
         %eventCellArray
         %%%%%%%%%%%%%%%
@@ -72,52 +145,79 @@ ParseInput;
         %%%%%%%%%%%%%%%%
         % var1
         %%%%%%%%%%%%%%%%
-        if ~ischar(var1)||isempty(var1)
-            if iscell(
-            error(['var1 can not be empty and should be a char array ' class(eventCellArray)]);
+        if isempty(var1)
+            error('var1 can not be empty');
+        elseif iscell(var1)
+            if ~all(cellfun (@ischar,var1))
+                error('var1 should be a cell of strings');
+            elseif any(cellfun(@isempty,var1))
+                error('var1 can not contain any empty cells');
+            end
+        elseif ischar(var1)
+            if strcmp(var1,'opt')||strcmp(var1,'optRange')
+                error('var1 can not be opt or optRange');
+            end
+        else error(['should be a string or cell of strings, but instead is a ' class(var1)]);
         end
-        
+        %%%%%%%%
+        %Process varargin
         %%%%%%%%%%%%%%%%
         % var2
         %%%%%%%%%%%%%%%%
-        if ~ischar(varargin{1})||isempty(varargin{1})
-            error(['var2/opt can not be empty and should be a char array ' class(eventCellArray)]);
-        elseif ~strcmp(varargin{1},'opt')&&~strcmp(varargin{1},'range')
-            var2=varargin{1};
-            var2Bool=true;
+        if length(varargin)>=1
+            if isempty(varargin{1})
+                error('var2/opt can not be empty');
+            elseif iscell(varargin{1})
+                if ~all(cellfun (@ischar,varargin{1}))
+                    error('var1 should be a cell of strings');
+                elseif any(cellfun(@isempty,varargin{1}))
+                    error('var1 can not contain any empty cells');
+                else
+                    var2=varargin{1};
+                    var2Bool=true;
+                end
+            elseif ischar(varargin{1})
+                if ~(strcmp(varargin{1},'opt')||strcmp(varargin{1},'optRange'))
+                    var2=varargin{1};
+                    var2Bool=true;
+                end
+            else error('var2/opt can not be empty');
+            end
         end
         %%%%%%%%%%%%%%%%
         % 'opt'
         %%%%%%%%%%%%%%%%
-        if ~ischar(varargin{1+var2bool})||isempty(varargin{1+var2bool})
-            error(['opt can not be empty and should be a char array but is a ' class(eventCellArray)]);
-        elseif ~strcmp(varargin{1+var2bool},'opt')
-            error([varargin{1+var2bool} ' was not expected, opt was.']);
-        elseif ~ischar(varargin{2+var2bool})||isempty(varargin{2+var2bool})
-            error(['opt2 can not be empty and should be a char array but is a ' class(eventCellArray)]);
-        else switch varargin{2+var2bool}
-                case 'none'
-                    optbool=true;
-                    opt=varargin{2+var2bool};
-                case 'iso'
-                    optbool=true;
-                    opt=varargin{2+var2bool};
-                case 'firstAfter'
-                    optbool=true;
-                    opt=varargin{2+var2bool};
-                case 'lastBefore'
-                    optbool=true;
-                    opt=varargin{2+var2bool};
-                otherwise
-                    error([varargin{2+var2bool} ' is not a valid option input.']);
-                    %is it possible to event get here? seems out of index
+        if length(varargin)>=var2Bool+1
+            if ~ischar(varargin{1+var2Bool})||isempty(varargin{1+var2Bool})
+                error(['opt can not be empty and should be a char array but is a ' class(varargin{1+var2Bool})]);
+            elseif strcmp(varargin{1+var2Bool},'opt')
+                if length(varargin)>=var2Bool+2
+                    if ~ischar(varargin{2+var2Bool})||isempty(varargin{2+var2Bool})
+                        error(['opt2 can not be empty and should be a char array but is a ' class(varargin{2+var2Bool})]);
+                    else switch varargin{2+var2Bool}
+                            case 'none'
+                                optBool=true;
+                                opt=varargin{2+var2Bool};
+                            case 'iso'
+                                optBool=true;
+                                opt=varargin{2+var2Bool};
+                            case 'firstAfter'
+                                optBool=true;
+                                opt=varargin{2+var2Bool};
+                            case 'lastBefore'
+                                optBool=true;
+                                opt=varargin{2+var2Bool};
+                            otherwise
+                                error([varargin{2+var2Bool} ' is not a valid option input.']);
+                                %is it possible to event get here? seems out of index
+                        end
+                    end
+                else error('opt requires another parameter to function');
+                end
+            else error([varargin{1+var2Bool} ' was not expected, opt was.']);
             end
-        end    var2=varargin{1};
-        
-        var2Bool=true;
+        end
     end
-
-end
 end
 %
 %
