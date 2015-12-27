@@ -1,0 +1,24 @@
+This is for brainstorming the changes intended to the overall design of the currently analysis suite - Master
+
+Step 1 - First Steps
+-Read in mcd and medpc to generate several .m
+-----A mess of processing which led to 02_new -- This needs to be documented and then updated
+
+Step 2a---Spectrum Analysis
+what a mess this is...
+
+Step2b---For Spike Sorting
+-Generate .bin for Offline Spike Sorter
+-Spike Sorting
+-Generation of .txt files
+-Reading in of txt and adding to .m
+
+Step3
+Conversion to Chris File format (pevt etc)
+	-conversion script - Generates mXXDYY_ZZ.mat files right now (m22D10_03.mat)
+	-DriverFunction (Currently Several Saving to the sama data file, which is pretty odd)
+	-mkperievent --- Working to split this up in branch now
+	-DPrime-MkSelIdx_LINSENBARDTDN_XX.m
+	-DPrimeDetails.m
+	-figures at Testing_boundedines script / some plots2functionize
+

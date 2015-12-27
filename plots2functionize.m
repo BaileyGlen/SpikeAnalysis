@@ -379,6 +379,36 @@ overlapAll(1,1)=length(intersect(LL04All,RL04All))/length(LL04All);
 overlapAll(2,1)=length(intersect(LL04All,RL04All))/length(RL04All);
 overlapAll(1,2)=length(intersect(LL10All,RL10All))/length(LL10All);
 overlapAll(2,2)=length(intersect(LL10All,RL10All))/length(RL10All);
+%% 
+overlap(1,:)=[length(intersect(data.LL04.DPrime.First3.IncIDs,data.RL04.DPrime.First3.IncIDs)) length(data.LL04.DPrime.First3.IncIDs)];
+overlap(2,:)=[length(intersect(data.LL04.DPrime.First3.IncIDs,data.RL04.DPrime.First3.IncIDs)) length(data.RL04.DPrime.First3.IncIDs)];
+overlap(3,:)=[length(intersect(data.LL10.DPrime.First3.IncIDs,data.RL10.DPrime.First3.IncIDs)) length(data.LL10.DPrime.First3.IncIDs)];
+overlap(4,:)=[length(intersect(data.LL10.DPrime.First3.IncIDs,data.RL10.DPrime.First3.IncIDs)) length(data.RL10.DPrime.First3.IncIDs)];
+
+overlap(5,:)=[length(intersect(data.LL04.DPrime.First3.DecIDs,data.RL04.DPrime.First3.DecIDs)) length(data.LL04.DPrime.First3.DecIDs)];
+overlap(6,:)=[length(intersect(data.LL04.DPrime.First3.DecIDs,data.RL04.DPrime.First3.DecIDs)) length(data.RL04.DPrime.First3.DecIDs)];
+overlap(7,:)=[length(intersect(data.LL10.DPrime.First3.DecIDs,data.RL10.DPrime.First3.DecIDs)) length(data.LL10.DPrime.First3.DecIDs)];
+overlap(8,:)=[length(intersect(data.LL10.DPrime.First3.DecIDs,data.RL10.DPrime.First3.DecIDs)) length(data.RL10.DPrime.First3.DecIDs)];
+
+%% DPrime Cell overlappage reversed
+overlapR(1,:)=[length(intersect(data.LL04.DPrime.First3.IncIDs,data.RL04.DPrime.First3.DecIDs)) length(data.LL04.DPrime.First3.IncIDs)];
+overlapR(2,:)=[length(intersect(data.LL04.DPrime.First3.DecIDs,data.RL04.DPrime.First3.IncIDs)) length(data.RL04.DPrime.First3.IncIDs)];
+overlapR(3,:)=[length(intersect(data.LL10.DPrime.First3.IncIDs,data.RL10.DPrime.First3.DecIDs)) length(data.LL10.DPrime.First3.IncIDs)];
+overlapR(4,:)=[length(intersect(data.LL10.DPrime.First3.DecIDs,data.RL10.DPrime.First3.IncIDs)) length(data.RL10.DPrime.First3.IncIDs)];
+
+overlapR(5,:)=[length(intersect(data.LL04.DPrime.First3.DecIDs,data.RL04.DPrime.First3.IncIDs)) length(data.LL04.DPrime.First3.DecIDs)];
+overlapR(6,:)=[length(intersect(data.LL04.DPrime.First3.IncIDs,data.RL04.DPrime.First3.DecIDs)) length(data.RL04.DPrime.First3.DecIDs)];
+overlapR(7,:)=[length(intersect(data.LL10.DPrime.First3.DecIDs,data.RL10.DPrime.First3.IncIDs)) length(data.LL10.DPrime.First3.DecIDs)];
+overlapR(8,:)=[length(intersect(data.LL10.DPrime.First3.IncIDs,data.RL10.DPrime.First3.DecIDs)) length(data.RL10.DPrime.First3.DecIDs)];
+%% DPrime Cell overlappage - either direction
+LL04All=[data.LL04.DPrime.First3.IncIDs;data.LL04.DPrime.First3.DecIDs];
+RL04All=[data.RL04.DPrime.First3.IncIDs;data.RL04.DPrime.First3.DecIDs];
+LL10All=[data.LL10.DPrime.First3.IncIDs;data.LL10.DPrime.First3.DecIDs];
+RL10All=[data.RL10.DPrime.First3.IncIDs;data.RL10.DPrime.First3.DecIDs];
+overlapAll(1,:)=[length(intersect(LL04All,RL04All)) length(LL04All)];
+overlapAll(2,:)=[length(intersect(LL04All,RL04All)) length(RL04All)];
+overlapAll(3,:)=[length(intersect(LL10All,RL10All)) length(LL10All)];
+overlapAll(4,:)=[length(intersect(LL10All,RL10All)) length(RL10All)];
 %% Getting the pie charts
 VarList={'LL04','RL04','LL10','RL10'};
 figure;
