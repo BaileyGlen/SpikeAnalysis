@@ -1,5 +1,4 @@
-This is for brainstorming the changes intended to the overall design of the currently analysis suite - Master
-
+Overall Design
 Step 1 - First Steps
 -Read in mcd and medpc to generate several .m
 -----A mess of processing which led to 02_new -- This needs to be documented and then updated
@@ -21,4 +20,6 @@ Conversion to Chris File format (pevt etc)
 	-DPrime-MkSelIdx_LINSENBARDTDN_XX.m
 	-DPrimeDetails.m
 	-figures at Testing_boundedines script / some plots2functionize
-
+-------------------------------------------------------------------------
+Get All Presses surrounding the 3s Before and After a Press
+Just hacking into mkPerievent to get this out.

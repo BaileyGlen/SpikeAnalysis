@@ -14,8 +14,8 @@ PLOT=0;
 nmPC=4;
 tempRange = [1:((preEvt+postEvt)/rasterBin)+1];
 DayVar={4,4,10,10};
-EventVar={'LL_I','RL_I','LL_I','RL_I'};
-%EventVar={'LL_R','RL_R','LL_R','RL_R'};
+%EventVar={'LL_I','RL_I','LL_I','RL_I'};
+EventVar={'LL_R','RL_R','LL_R','RL_R'};
 %EventVar={'LL_C','RL_C','LL_C','RL_C'};
 StructVar={'LL04','RL04','LL10','RL10'};
 %% Create the data Structure - Reinforced
@@ -45,12 +45,13 @@ end
 
 
     function eventStruct = getPeriEvent()
-        [Mtx, MlMtx, BlMtx, pEvt, pEvt_base]=mkPeriEvt(bEvt,'r',Day,'zNo',PLOT, preEvt, postEvt, rasterBin);
+        [Mtx, MlMtx, BlMtx, pEvt, pEvt_base,SurSpike]=mkPeriEvt(bEvt,'r',Day,'zNo',PLOT, preEvt, postEvt, rasterBin);
         eventStruct.Mtx = Mtx;
         eventStruct.MlMtx = MlMtx;
         eventStruct.BlMtx = BlMtx;
         eventStruct.pEvt = pEvt;
         eventStruct.pEvt_base = pEvt_base;
+        eventStruct.SurSpike=SurSpike;
     end
     function eventStruct = getPCA (eventStruct)
         k=find(sum(eventStruct.MlMtx')>mnSpk & sum(eventStruct.MlMtx')<mxSpk); % get rid of low FR ST
