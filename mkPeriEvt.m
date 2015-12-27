@@ -1,20 +1,4 @@
 function [Mtx, MnMtx, BlMtx, pEvt, pEvt_base]=mkPeriEvt(evtTrigger,clr,selDay,zScore,PLOT, preEvt, postEvt, rasterBin)
-%left lever = RI
-%right elver = RR
-
-% clear all
-% close all
-% PLOT=1;
-% % evtTrigger={'LL_R';'RL_R'}; clr='k';
-% % evtTrigger={'RL_R'}; clr='r';
-% evtTrigger={'LL_R'}; clr='b';
-% selDay=04;
-% zScore='zNo';
-% rasterBin=0.05;
-% preEvt=3;            % time prior to Event in sec
-% postEvt=10;           % time post Event in sec
-
-%% Excluded Data Sets: 'm16D10_03.mat';
 
 switch selDay
     case 4
@@ -37,7 +21,7 @@ for XX=1:length(DirList)
         BB_raw=strmatch('BB',behaveEvt_Raw);
         BB_ts=behaveEvtTm_Raw(BB_raw);
         k=unique(cell2mat(arrayfun (@(x) find(BB_ts>x & BB_ts<x+8,1), Press_ts, 'UniformOutput', false)));
-        hld=BB_ts(k);      
+        hld=BB_ts(k);
         
     elseif strcmp(evtTrigger,'LL_C')
         Press_raw=strmatch('LL_R',behaveEvt_Raw);
@@ -52,7 +36,7 @@ for XX=1:length(DirList)
         Other_raw= cellfun(@(y) max(y), cellfun(@(x) strcmp({'BB' 'RL_R' 'LL_R' 'RL_U' 'LL_U'},x),behaveEvt_Raw,'UniformOutput', false) );
         Other_ts=behaveEvtTm_Raw(Other_raw);
         k=cellfun(@(y) isempty(y), arrayfun (@(x) find(Other_ts>(x-3) & Other_ts<(x+3) & abs(Other_ts-x)>.0001), Press_ts, 'UniformOutput', false)  );
-        hld=Press_ts(k);      
+        hld=Press_ts(k);
         postEvt=3;
     elseif strcmp(evtTrigger,'LL_I')
         Press_raw=strmatch('LL_U',behaveEvt_Raw);
@@ -60,11 +44,11 @@ for XX=1:length(DirList)
         Other_raw= cellfun(@(y) max(y), cellfun(@(x) strcmp({'BB' 'RL_R' 'LL_R' 'RL_U' 'LL_U'},x),behaveEvt_Raw,'UniformOutput', false) );
         Other_ts=behaveEvtTm_Raw(Other_raw);
         k=cellfun(@(y) isempty(y), arrayfun (@(x) find(Other_ts>(x-3) & Other_ts<(x+3) & abs(Other_ts-x)>.0001), Press_ts, 'UniformOutput', false)  );
-        hld=Press_ts(k);   
+        hld=Press_ts(k);
         postEvt=3;
-    else    
+    else
         k=strmatch(evtTrigger,behaveEvt_Raw);
-        hld=behaveEvtTm_Raw(k); 
+        hld=behaveEvtTm_Raw(k);
     end
     %selEvt=sort(cell2mat(hld'));
     selEvt = hld;
@@ -81,24 +65,15 @@ for XX=1:length(DirList)
     k=find(hRaster(:,end)~=0);
     % Making histogram of artifacts to reject
     artHist=histc(find(mask==0)/40000,rasterTm);
-    
     for i=1:size(hRaster,2)-1;   % Number of spike trains
         for j=1:length(k);     % Number of events
             if k(j)-preEvt*(1/rasterBin)>0 &&  k(j)+postEvt*(1/rasterBin)<length(hRaster);
                 pEvt{XX,1}{i,1}(j,:)=smooth(hRaster(k(j)-preEvt*(1/rasterBin):k(j)+postEvt*(1/rasterBin),i),5);
-                %%% BG - If histc bin has 1, set pEvt to NaN - this could be just
-                %%% the bin, or the entire row
-                needNaN = find(artHist(k(j)-preEvt*(1/rasterBin):k(j)+postEvt*(1/rasterBin)));
-                %set the misisng Bins to NaN
-                %arrayfun(@(QQ) pEvt{QQ,1}{i,1}(j,i) = NaN, find(artHist(k(j)-preEvt*(1/rasterBin):k(j)+postEvt*(1/rasterBin))));
-%                 for x= needNaN
-%                     pEvt{XX,1}{i,1}(j,needNaN)= NaN;
-%                 end
-                % set the entire Event to NaN
-                                if needNaN
-                                    pEvt{XX,1}{i,1}(j,:)= NaN;
-                                end
-                %%% BG - end
+                % BG - If histc bin has 1, set pEvt to NaN - this could be just
+                % the bin, or the entire row
+                if find(artHist(k(j)-preEvt*(1/rasterBin):k(j)+postEvt*(1/rasterBin)));          
+                    pEvt{XX,1}{i,1}(j,:)= NaN;
+                end
             end;
         end;
         %buildBaseline pEvt
