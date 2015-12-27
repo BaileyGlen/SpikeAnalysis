@@ -1,4 +1,4 @@
-This is for brainstorming the changes intended to the overall design of the currently analysis suite - Master
+This is for brainstorming the changes intended to the overall design of the current analysis suite
 
 Step 1 - First Steps
 -Read in mcd and medpc to generate several .m
@@ -21,4 +21,16 @@ Conversion to Chris File format (pevt etc)
 	-DPrime-MkSelIdx_LINSENBARDTDN_XX.m
 	-DPrimeDetails.m
 	-figures at Testing_boundedines script / some plots2functionize
+
+Changes made/tomake in FurtherSplitMkPeri
+
+MKperievent split
+Currently, overly complex GenArray
+Trying
+-WantedFiles
+-SimpleGenArray
+-mkperievt that also saves stats about the split
+-doing this alongside adding getting the number of surrounding presses
+-perhaps getting stats is better done by saving the event arrays somehow? 
+Want to be able tp specify somewhere in here a settings set to struct, and a struct name so multiple can exist in one data file.
 
