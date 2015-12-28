@@ -23,7 +23,7 @@ for x=1:4
     temperr=std(temp(temp(:,1)==x,5:6),1)/sqrt(length(temp(temp(:,1)==x ,5)));
     meanVals(x,[1 3])=tempmean;
     meanVals(x,[2 4])=temperr;
-%    meanValsString{x}= [num2str(tempmean(1),'%.2f') char(177) num2str(temperr,'%.2f')];
+    %    meanValsString{x}= [num2str(tempmean(1),'%.2f') char(177) num2str(temperr,'%.2f')];
     meanValsUsed(x,[1 3])=mean(temp(temp(:,1)==x & temp(:,end)==1,5:6),1);
     meanValsUsed(x,[2 4])=std(temp(temp(:,1)==x & temp(:,end)==1 ,5:6),1)/sqrt(length(temp(temp(:,1)==x & temp(:,end)==1 ,5)));
 end
@@ -49,4 +49,17 @@ end
 meanValsByAnimal=reshape(meanValsByAnimal',1,16);
 for x=1:8
     meanValsByAnimalString{x}= [num2str(meanValsByAnimal((x*2)-1),'%.2f') setstr(177) num2str(meanValsByAnimal(x*2),'%.2f')];
+end
+%% Get nuber of cells in groups
+
+
+VarList={'LL04','RL04','LL10','RL10'};
+for varIDX=1:4
+    tempCount = 1;
+    cellCounts = cellfun(@length,data.(VarList{varIDX}).pEvt);
+    for x=1:length(data.LL04.pEvt)
+        tempData(varIDX,x)=length(intersect (data.(VarList{varIDX}).DPrime.First3.IncIDs,tempCount:tempCount+cellCounts(x)-1));
+        tempData(varIDX+4,x)=length(intersect (data.(VarList{varIDX}).DPrime.First3.DecIDs,tempCount:tempCount+cellCounts(x)-1));
+        tempCount=tempCount+cellCounts(x)-1;
+    end
 end
