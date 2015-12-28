@@ -51,7 +51,7 @@ for x=1:8
     meanValsByAnimalString{x}= [num2str(meanValsByAnimal((x*2)-1),'%.2f') setstr(177) num2str(meanValsByAnimal(x*2),'%.2f')];
 end
 %% Get nuber of cells in groups
-tempData=nan(8,6);
+%tempData=nan(8,6);
 
 VarList={'LL04','RL04','LL10','RL10'};
 for varIDX=1:4
@@ -59,8 +59,8 @@ for varIDX=1:4
 
     cellCounts = cellfun(@length,data.(VarList{varIDX}).pEvt);
     for x=1:length(data.(VarList{varIDX}).pEvt)
-        tempData(varIDX,x)=length(intersect (data.(VarList{varIDX}).DPrime.First3.IncIDs,tempCount:tempCount+cellCounts(x)-1));
-        tempData(varIDX+4,x)=length(intersect (data.(VarList{varIDX}).DPrime.First3.DecIDs,tempCount:tempCount+cellCounts(x)-1));
+        tempData{varIDX,x}=intersect (data.(VarList{varIDX}).DPrime.First3.IncIDs,tempCount:tempCount+cellCounts(x)-1)-tempCount+1;
+        tempData{varIDX+4,x}=intersect (data.(VarList{varIDX}).DPrime.First3.DecIDs,tempCount:tempCount+cellCounts(x)-1)-tempCount+1;
         tempCount=tempCount+cellCounts(x)-1;
     end
 end
