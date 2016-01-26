@@ -355,3 +355,55 @@ for condIDX=1:2
     
 end
 export_fig UnRfD.png -m3.5 -transparent;
+%% Inc and Dec -- RfDel Early vs Extended 
+fighandle=figure;
+CondList={'IncZ','DecZ'};
+meanRange=1:4;
+stderrRange=5:8;
+
+%newcmap = [temp(4,:);temp(2,:)];
+newcmap = [temp(1,:);temp(3,:);temp(4,:);temp(2,:)];
+set(fighandle, 'Position', [100, 100, 350, 250]);
+for condIDX=1:2
+    subplot(2,1,condIDX);
+    y=[];
+    yStdErr=[];
+    for varIDX=(1:2)
+    zData=zscore(data.(VarList{varIDX+(2*(condIDX-1))}).MlMtx')';
+    y(:,varIDX)=nanmean(zData);
+    yStdErr(:,1,varIDX)=nanstd(zData)/sqrt(size(zData,1));
+    axisPos=get(gca, 'position');
+    end
+    
+%     for varIDX = 1:4
+%         y(:,varIDX)=mean(data.(VarList{varIDX}).DPrime.First3.(CondList{condIDX}),1);
+%         yStdErr(:,1,varIDX)=std(data.(VarList{varIDX}).DPrime.First3.(CondList{condIDX}),1)/sqrt(size(data.(VarList{varIDX}).DPrime.First3.(CondList{condIDX}),1));
+%         %y(:,varIDX-2)=mean(data.(VarList{varIDX}).DPrime.First3.(CondList{condIDX}),1);
+%         %yStdErr(:,1,varIDX-2)=std(data.(VarList{varIDX}).DPrime.First3.(CondList{condIDX}),1)/sqrt(size(data.(VarList{varIDX}).DPrime.First3.(CondList{condIDX}),1));
+%         
+%         
+%     end
+    [hl, hp]=boundedline(data.xA, y, yStdErr ,'cmap',newcmap((1:2)+(2*(condIDX-1)),:), 'alpha');
+    %axisPos=get(gca, 'position');
+    %set(gca, 'position', [axisPos(1)-(~mod(condIDX,2)*.04) axisPos(2)+.07 axisPos(3) axisPos(4)]);
+    
+    if condIDX==1
+        tmpStr='Increasing';
+    else
+        tmpStr='Decreasing';
+    end
+    %title(['Reinforcer Consumption Modulated Cells: ' tmpStr]);
+    set(hl,'linewidth',2.2);
+    plot([-3 13],[0 0],'linestyle','--','color',[.5 .5 .5],'linewidth',.9);
+    axis([-2.8 6 -.6 .9]);
+    set(gca,'YTick', [-.4 0 .4 .8]);
+    set(gca,'XTick', [-2 0 2 4 6]);
+    set(gca,'FontSize',8)
+    set(gca,'FontName','Calibri')
+    set(gca,'Linewidth',.75);
+    
+    %h_legend=legend (VarList{:});
+    %set(h_legend,'FontSize',8,'Orientation','horizontal','Location','best')
+    
+end
+export_fig RfDel1Early.png -m3.5 -transparent;

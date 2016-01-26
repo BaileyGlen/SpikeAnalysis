@@ -1,5 +1,5 @@
 function [ data  ] = readRawFiles( badChannels, varargin )
-%readRawFiles Summary of this function goes here
+%READRAWFILES Reads in .mcd and MedPC and returns data struct
 %   Detailed explanation goes here
 
 if nargin >= 3
