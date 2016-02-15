@@ -5,27 +5,31 @@ function [ dataStruct ] = DriverFunction_RfDel(  )
 %   the other functions
 
 %% Settings for creating the perievent mtx
+
+dataStruct.DataSet={'RfDel'}; 
+eventType='R';
+preEvt=3;            % time prior to Event in sec
+postEvt=10;           % time post Event in sec
+animalList{1}={'m13', 'm14', 'm16', 'm21', 'm22', 'm25'}; %day 4
+animalList{2}={'m13', 'm14', 'm21', 'm22', 'm25'};        %day 10 
+fileEnd = '_03.mat';
+rasterBin=.1;      % Size of bines for raster
+
+% nmPC=4;
+tempRange = [1:((preEvt+postEvt)/rasterBin)+1];
+dayList={'04','10'};
+scheduleList={'LL','RL'};
 mnSpk = 0;
 mxSpk=1000;
-rasterBin=.1;      % Size of bines for raster
-preEvt=3;            % time prior to Event in sec
-postEvt=3;           % time post Event in sec
 PLOT=0;
-nmPC=4;
-tempRange = [1:((preEvt+postEvt)/rasterBin)+1];
-
 % DayVar={4,4,10,10};
 %EventVar={'LL_I','RL_I','LL_I','RL_I'};
 %StructVar={'LL04','RL04','LL10','RL10'};
 %% removing the above code to instead make this based on...
 % animal list, day list, scedule list. build struct var from these
-dayList={'04','10'};
-scheduleList={'LL','RL'};
-eventType='I';
-dataStruct.DataSet={'RfDel'}; 
-animalList(1,:)={'m13', 'm14', 'm16', 'm21', 'm22', 'm25'}; %day 4
-animalList(2,:)={'m13', 'm14', 'm21', 'm22', 'm25'};        %day 10 
-fileEnd = '_03.mat';
+
+
+
 %DirList={'m13D04_03.mat';'m14D04_03.mat';'m16D04_03.mat';'m21D04_03.mat';'m22D04_03.mat';'m25D04_03.mat';...
 %            'm13D10_03.mat';'m14D04_03.mat';'m21D10_03.mat';'m22D10_03.mat';'m25D10_03.mat'};
 
@@ -67,13 +71,13 @@ end
     function fileNameList = genFileNameList()
         fileNameList = {};
         for dayIdx=1:2
-            for animalIdx=length(animalList(dayIdx,:));
-                fileNameList(dayIdx,animalIdx)=[animalList(dayIdx,animalIdx) 'D' dayList(dayIdx) fileEnd];
+            for animalIdx=1:length(animalList{dayIdx});
+                fileNameList{dayIdx}{animalIdx}=[animalList{dayIdx}{animalIdx} 'D' dayList{dayIdx} fileEnd];
             end
         end
     end
     function eventStruct = getPeriEvent()
-        [Mtx, MlMtx, BlMtx, pEvt, pEvt_base]=mkPeriEvt(bEvt,'r',datastruct.fileNameList(dayIdx,:),'zNo',PLOT, preEvt, postEvt, rasterBin);
+        [Mtx, MlMtx, BlMtx, pEvt, pEvt_base]=mkPeriEvt(bEvt,'r',dataStruct.fileNameList{dayIdx},'zNo',PLOT, preEvt, postEvt, rasterBin);
         eventStruct.Mtx = Mtx;
         eventStruct.MlMtx = MlMtx;
         eventStruct.BlMtx = BlMtx;
