@@ -1,7 +1,7 @@
 function data = DPrime_Con(data,type)%% NEWEST VERSION OF SELECTIVITY_ D.N.Linsenbardt (November 2015) dlinsen1@gmail.com
 close all;
 for t=1:4;
-    %clearvars ('-except', 'data', 't');
+    clearvars ('-except', 'data', 't', 'type');
     %cd 'D:\Users\Bailey\Documents\Dropbox\Mouse MEA\Mouse MEA\Mat\CL';
     if t==1;
         %load('LLD04_pEvt02.mat');
