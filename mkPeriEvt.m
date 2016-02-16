@@ -1,4 +1,4 @@
-function [Mtx, MnMtx, BlMtx, pEvt, pEvt_base]=mkPeriEvt(evtTrigger,clr,selDay,zScore,PLOT, preEvt, postEvt, rasterBin)
+function [Mtx, MnMtx, BlMtx, pEvt, pEvt_base]=mkPeriEvt(evtTrigger,clr,DirList,zScore,PLOT, preEvt, postEvt, rasterBin)
 %left lever = RI
 %right elver = RR
 
@@ -16,16 +16,16 @@ function [Mtx, MnMtx, BlMtx, pEvt, pEvt_base]=mkPeriEvt(evtTrigger,clr,selDay,zS
 
 %% Excluded Data Sets: 'm16D10_03.mat';
 
-switch selDay
-    case 4
-        %DirList={'m13D04_03.mat';'m14D04_03.mat';'m16D04_03.mat';'m22D04_03';'m25D04_03.mat'};
-        DirList={'m13D04_03.mat';'m14D04_03.mat';'m16D04_03.mat';'m21D04_03';'m22D04_03'};
-    case 10
-        DirList={'m13D04_03.mat';'m14D10_03.mat';'m25D10_03.mat'};
-    case 410
-        DirList={'m13D04_03.mat';'m14D04_03.mat';'m16D04_03.mat';'m21D04_03.mat';'m22D04_03.mat';'m25D04_03.mat';...
-            'm13D10_03.mat';'m14D04_03.mat';'m21D10_03.mat';'m22D10_03.mat';'m25D10_03.mat'};
-end;
+% switch selDay
+%     case 4
+%         %DirList={'m13D04_03.mat';'m14D04_03.mat';'m16D04_03.mat';'m22D04_03';'m25D04_03.mat'};
+%         DirList={'m13D04_03.mat';'m14D04_03.mat';'m16D04_03.mat';'m21D04_03';'m22D04_03'};
+%     case 10
+%         DirList={'m13D04_03.mat';'m14D10_03.mat';'m25D10_03.mat'};
+%     case 410
+%         DirList={'m13D04_03.mat';'m14D04_03.mat';'m16D04_03.mat';'m21D04_03.mat';'m22D04_03.mat';'m25D04_03.mat';...
+%             'm13D10_03.mat';'m14D04_03.mat';'m21D10_03.mat';'m22D10_03.mat';'m25D10_03.mat'};
+% end;
 
 for XX=1:length(DirList)
     %% Load data
