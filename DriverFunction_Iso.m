@@ -1,4 +1,4 @@
-function [ dataStruct ] = DriverFunction_RfDel(  )
+function [ dataStruct ] = DriverFunction_Iso(  )
 %FilesAndSettings This is used to initialize all the various settings, in order to
 %have a single place to control them from
 %   This is a basic function to set up all the settings for feeding into
@@ -6,12 +6,12 @@ function [ dataStruct ] = DriverFunction_RfDel(  )
 
 %% Settings for creating the perievent mtx
 %Generating _04.mat
-dataStruct.DataSet='RfDel'; 
-eventType='R';
+dataStruct.DataSet='Iso'; 
+eventType='I';
 preEvt=3;            % time prior to Event in sec
 postEvt=3;           % time post Event in sec
-animalList{1}={'m13', 'm14', 'm16','m21', 'm22', 'm25'}; %day 4
-animalList{2}={'m13', 'm14', 'm21', 'm22', 'm25'};        %day 10 
+animalList{1}={'m13', 'm14', 'm16','m21', 'm22'}; %day 4
+animalList{2}={'m13', 'm14', 'm25'};        %day 10 
 fileEnd = '_03.mat';
 rasterBin=.1;      % Size of bines for raster
 
@@ -46,7 +46,7 @@ for dayIdx=1:2
         dataStruct.(curField)=getPCA(dataStruct.(curField));
     end
 end
-dataStruct=DPrime_Con(dataStruct ,'P');
+dataStruct=DPrime_3sec(dataStruct ,'P');
 % for x=1:4
 %     Day=DayVar{x};
 %     bEvt = EventVar{x};
