@@ -395,7 +395,7 @@ for condIDX=1:2
     %title(['Reinforcer Consumption Modulated Cells: ' tmpStr]);
     set(hl,'linewidth',2.2);
     plot([-3 13],[0 0],'linestyle','--','color',[.5 .5 .5],'linewidth',.9);
-    axis([-2.8 6 -.6 .9]);
+    axis([-2 2 -.6 .9]);
     set(gca,'YTick', [-.4 0 .4 .8]);
     set(gca,'XTick', [-2 0 2 4 6]);
     set(gca,'FontSize',8)
