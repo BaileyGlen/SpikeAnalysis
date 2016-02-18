@@ -46,7 +46,7 @@ box off;
 %     title(['Overall zscore']);
 %     axis([-3 3 -1 1]);
 %     legend (VarList{:});
-export_fig RfCon1.png -m3.5 -transparent
+export_fig Fig2A.png -m3.5 -transparent
 %% Inc and Dec
 fighandle=figure;
 CondList={'IncZ','DecZ'};
@@ -135,7 +135,7 @@ for condIDX=1:2
         plot([-3 13],[0 0],'linestyle','-','color',[.5 .5 .5],'linewidth',.9);
         if condIDX==2
             if timeIDX==1 plot([0.4 0.7],[1 1],'linestyle','-','color',[0 0 0],'linewidth',2);
-            else plot([0.9 1.3],[.2 .2],'linestyle','-','color',[0 0 0],'linewidth',2);
+            else plot([0.8 1.3],[.2 .2],'linestyle','-','color',[0 0 0],'linewidth',2);
             end
         end
         axis([-2.8 6 -1.5 2.5]);

@@ -229,7 +229,7 @@ cbPos=get(cb, 'position');
 set(cb, 'position', [cbPos(1)+.03 cbPos(2)-.025 cbPos(3)/5 cbPos(4)]);
 set(cb,'FontSize',8)
 set(cb,'FontName','Calibri')
-export_fig RfDelHeat.png -m3.5 -transparent
+export_fig RfConHeat.png -m3.5 -transparent
 %% Getting the pie charts
 VarList={'LL04','RL04','LL10','RL10'};
 fighandle=figure;
@@ -343,7 +343,7 @@ for condIDX=1:2
     %title(['Reinforcer Consumption Modulated Cells: ' tmpStr]);
     set(hl,'linewidth',2.2);
     plot([-3 13],[0 0],'linestyle','--','color',[.5 .5 .5],'linewidth',.9);
-    axis([-2.8 2.8 -1.5 2.5]);
+    axis([-2.8 6 -1.5 2.5]);
     set(gca,'YTick', [-1 0 1 2]);
     set(gca,'XTick', [-2 0 2 4 6]);
     set(gca,'FontSize',8)
@@ -352,9 +352,10 @@ for condIDX=1:2
     
     %h_legend=legend (VarList{:});
     %set(h_legend,'FontSize',8,'Orientation','horizontal','Location','best')
-    
+%    figTitle=['RfDel_' num2str(condIDX) '.png'];
+%    export_fig (fighandle, '-m3.5', '-transparent',figTitle);
 end
-export_fig UnRfD.png -m3.5 -transparent;
+export_fig RfConIncDec.png -m3.5 -transparent;
 %% Inc and Dec -- RfDel Early vs Extended 
 
 CondList={'IncZ','DecZ'};

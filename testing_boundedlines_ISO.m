@@ -23,7 +23,7 @@ fighandle=figure;
 %newStdErr=permute(yStdErr,[1,2,3]);
 [hl, hp]=boundedline(data.xA, y, yStdErr ,'cmap',newcmap, 'alpha');
 %title(['Overall zscore']);
-axis([-2.8 6 -.75 .95]);
+axis([-2.8 2.8 -.75 .95]);
 %legend (VarList{:});
 set(hl,'linewidth',2.5);
 set(fighandle, 'Position', [100, 100, 420, 208]);
@@ -46,7 +46,7 @@ box off;
 %     title(['Overall zscore']);
 %     axis([-3 3 -1 1]);
 %     legend (VarList{:});
-export_fig RfCon1.png -m3.5 -transparent
+export_fig RfISO.png -m3.5 -transparent
 %% Inc and Dec
 fighandle=figure;
 CondList={'IncZ','DecZ'};
@@ -229,7 +229,7 @@ cbPos=get(cb, 'position');
 set(cb, 'position', [cbPos(1)+.03 cbPos(2)-.025 cbPos(3)/5 cbPos(4)]);
 set(cb,'FontSize',8)
 set(cb,'FontName','Calibri')
-export_fig RfDelHeat.png -m3.5 -transparent
+export_fig ISOHeat.png -m3.5 -transparent
 %% Getting the pie charts
 VarList={'LL04','RL04','LL10','RL10'};
 fighandle=figure;
@@ -352,9 +352,10 @@ for condIDX=1:2
     
     %h_legend=legend (VarList{:});
     %set(h_legend,'FontSize',8,'Orientation','horizontal','Location','best')
-    
+%    figTitle=['RfDel_' num2str(condIDX) '.png'];
+%    export_fig (fighandle, '-m3.5', '-transparent',figTitle);
 end
-export_fig UnRfD.png -m3.5 -transparent;
+export_fig ISOIncDec.png -m3.5 -transparent;
 %% Inc and Dec -- RfDel Early vs Extended 
 
 CondList={'IncZ','DecZ'};
