@@ -72,15 +72,18 @@ for condIDX=1:2
     %set(gca, 'position', [axisPos(1)-(~mod(condIDX,2)*.04) axisPos(2)+.07 axisPos(3) axisPos(4)]);
     
     if condIDX==1
+        plot([-0.3 0.5],[2.8 2.8],'linestyle','-','color',[0 0 0],'linewidth',2); %wrong
+        plot([0.6 3.4],[1.5 1.5],'linestyle','-','color',[0 0 0],'linewidth',2); %wrong
         tmpStr='Increasing';
     else
+        plot([0.0 2.1],[.5 .5],'linestyle','-','color',[0 0 0],'linewidth',2);
         tmpStr='Decreasing';
     end
     %title(['Reinforcer Consumption Modulated Cells: ' tmpStr]);
     set(hl,'linewidth',2.2);
     plot([-3 13],[0 0],'linestyle','--','color',[.5 .5 .5],'linewidth',.9);
-    axis([-2.8 6 -1.5 2.5]);
-    set(gca,'YTick', [-1 0 1 2]);
+    axis([-2.8 6 -1.5 3.2]);
+    set(gca,'YTick', [-1 0 1 2 3]);
     set(gca,'XTick', [-2 0 2 4 6]);
     set(gca,'FontSize',8)
     set(gca,'FontName','Calibri')
@@ -90,6 +93,8 @@ for condIDX=1:2
     %set(h_legend,'FontSize',8,'Orientation','horizontal','Location','best')
     
 end
+tempTitle='RfConD.png';
+export_fig (fighandle, '-m3.5', '-transparent',tempTitle);
 %export_fig Fig2DEDec.png -m3.5 -transparent;
 %% Inc and Dec
 % Current Working!!!!
