@@ -1,4 +1,4 @@
-function [Mtx, MnMtx, BlMtx, pEvt, pEvt_base]=mkPeriEvt(evtTrigger,clr,DirList,zScore,PLOT, preEvt, postEvt, rasterBin)
+function [Mtx, MnMtx, BlMtx, pEvt, pEvt_base, SurSpike]=mkPeriEvt(evtTrigger,clr,DirList,zScore,PLOT, preEvt, postEvt, rasterBin)
 %left lever = RI
 %right elver = RR
 
@@ -64,10 +64,14 @@ for XX=1:length(DirList)
         postEvt=3;
     else    
         k=strmatch(evtTrigger,behaveEvt_Raw);
+        k2=strmatch([evtTrigger(1:3) 'U'], behaveEvt_Raw);
         hld=behaveEvtTm_Raw(k); 
+        hld2=behaveEvtTm_Raw(k2); 
+
     end
     %selEvt=sort(cell2mat(hld'));
-    selEvt = hld;
+    selEvt=hld;
+    selEvt2=hld2;
     
     % Tacking on behavrioal events to STMtx in last column to build rasters
     STMtx(:,end+1)=repmat(nan,size(STMtx,1),1);
@@ -86,6 +90,10 @@ for XX=1:length(DirList)
         for j=1:length(k);     % Number of events
             if k(j)-preEvt*(1/rasterBin)>0 &&  k(j)+postEvt*(1/rasterBin)<length(hRaster);
                 pEvt{XX,1}{i,1}(j,:)=smooth(hRaster(k(j)-preEvt*(1/rasterBin):k(j)+postEvt*(1/rasterBin),i),5);
+                if i==1
+                    SurSpike{XX,1}(j,1)=length(find(selEvt2>=selEvt(j)-3 & selEvt2<selEvt(j))); 
+                    SurSpike{XX,1}(j,2)=length(find(selEvt2>selEvt(j) & selEvt2<=selEvt(j)+3));
+                end
                 %%% BG - If histc bin has 1, set pEvt to NaN - this could be just
                 %%% the bin, or the entire row
                 needNaN = find(artHist(k(j)-preEvt*(1/rasterBin):k(j)+postEvt*(1/rasterBin)));
