@@ -11,7 +11,7 @@ for varIDX=1:4
         temp(curRange,2)=CellIDX;%AnimalID
         temp(curRange,3)=multVar;%CellCount
         temp(curRange,4)=curRange-totCount+1;%TrialID
-        %Rf2BB
+        %num presses before and after
         temp(curRange,5:6)= [data.(VarList{varIDX}).SurSpike{CellIDX}];
         %0=Bad 1=Good
         temp(curRange,7)=~isnan(data.(VarList{varIDX}).pEvt{CellIDX}{1}(:,1));

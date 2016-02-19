@@ -1,4 +1,4 @@
-function [Mtx, MnMtx, BlMtx, pEvt, pEvt_base, SurSpike]=mkPeriEvt(evtTrigger,clr,DirList,zScore,PLOT, preEvt, postEvt, rasterBin)
+function [SurSpike]=getSurSpike(evtTrigger,clr,DirList,zScore,PLOT, preEvt, postEvt, rasterBin)
 %left lever = RI
 %right elver = RR
 
@@ -26,11 +26,10 @@ function [Mtx, MnMtx, BlMtx, pEvt, pEvt_base, SurSpike]=mkPeriEvt(evtTrigger,clr
 %         DirList={'m13D04_03.mat';'m14D04_03.mat';'m16D04_03.mat';'m21D04_03.mat';'m22D04_03.mat';'m25D04_03.mat';...
 %             'm13D10_03.mat';'m14D04_03.mat';'m21D10_03.mat';'m22D10_03.mat';'m25D10_03.mat'};
 % end;
-
+SurSpike={};
 for XX=1:length(DirList)
     %% Load data
     load(DirList{XX});
-    SurSpike={};
     % Mean Firing Rates
     if strcmp(evtTrigger,'RL_C')
         Press_raw=strmatch('RL_R',behaveEvt_Raw);

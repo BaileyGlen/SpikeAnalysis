@@ -1,4 +1,4 @@
-function [ dataStruct ] = DriverFunction_RfCon(  )
+function [ dataStruct ] = CompileSurSpike_RfCon(  )
 %FilesAndSettings This is used to initialize all the various settings, in order to
 %have a single place to control them from
 %   This is a basic function to set up all the settings for feeding into
@@ -43,10 +43,10 @@ for dayIdx=1:2
         curField=[scheduleList{scheduleIdx} dayList{dayIdx}];
         bEvt=[scheduleList{scheduleIdx} '_' eventType];
         dataStruct.(curField)=getPeriEvent;
-        dataStruct.(curField)=getPCA(dataStruct.(curField));
+%         dataStruct.(curField)=getPCA(dataStruct.(curField));
     end
 end
-dataStruct=DPrime_Con(dataStruct ,'C');
+%dataStruct=DPrime_Con(dataStruct ,'C');
 % for x=1:4
 %     Day=DayVar{x};
 %     bEvt = EventVar{x};
@@ -78,12 +78,12 @@ dataStruct=DPrime_Con(dataStruct ,'C');
         end
     end
     function eventStruct = getPeriEvent()
-        [Mtx, MlMtx, BlMtx, pEvt, pEvt_base]=mkPeriEvt(bEvt,'r',dataStruct.fileNameList{dayIdx},'zNo',PLOT, preEvt, postEvt, rasterBin);
-        eventStruct.Mtx = Mtx;
-        eventStruct.MlMtx = MlMtx;
-        eventStruct.BlMtx = BlMtx;
-        eventStruct.pEvt = pEvt;
-        eventStruct.pEvt_base = pEvt_base;
+%         [Mtx, MlMtx, BlMtx, pEvt, pEvt_base]=mkPeriEvt(bEvt,'r',dataStruct.fileNameList{dayIdx},'zNo',PLOT, preEvt, postEvt, rasterBin);
+%         eventStruct.Mtx = Mtx;
+%         eventStruct.MlMtx = MlMtx;
+%         eventStruct.BlMtx = BlMtx;
+%         eventStruct.pEvt = pEvt;
+%         eventStruct.pEvt_base = pEvt_base;
         eventStruct.surSpike=getSurSpike(bEvt,'r',dataStruct.fileNameList{dayIdx},'zNo',PLOT, preEvt, postEvt, rasterBin);
     end
     function eventStruct = getPCA (eventStruct)
