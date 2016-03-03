@@ -220,7 +220,7 @@ for varIDX=1:4
     %set(gca,'DefaultTextFontSize',18+varIDX*2)
     imagesc(data.xA,1:size(tempZ,1),tempZ(data.(VarList{varIDX}).DPrime.First3.overallSort,:),[-2 2]);
     %title(['DPrime sorted: ' VarList{varIDX}]);
-    axis([-3 3 1 size(tempZ,1)]);
+    axis([-3 6 1 size(tempZ,1)]);
     axisPos=get(gca, 'position');
     set(gca, 'position', [axisPos(1)-(~mod(varIDX,2)*.02) axisPos(2)+((varIDX<=2)*.02) axisPos(3)/1.08 axisPos(4)]);
     set(gca,'YTick',[1 size(tempZ,1)])

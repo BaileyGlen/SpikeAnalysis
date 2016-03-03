@@ -114,7 +114,7 @@ for condIDX=1:2
         %yStdErr(:,1,varIDX-2)=std(data.(VarList{varIDX}).DPrime.First3.(CondList{condIDX}),1)/sqrt(size(data.(VarList{varIDX}).DPrime.First3.(CondList{condIDX}),1));
     end
     for timeIDX=1:2
-        fighandle=figure ('position',[100, 100, 250, 125]);%, 'outerposition',[90, 90, 250, 200]);
+        fighandle=figure ('position',[100, 100, 200, 200]);%, 'outerposition',[90, 90, 250, 200]);
         %curAxes=axes('position', [0.1300    0.1100+(.5*x-1)    0.7750    0.3412]);
         %axisPos=get(gca, 'position');
         %set (gca,'position', [0.1300+(    0.1100    0.7750    0.3412]);
@@ -139,13 +139,13 @@ for condIDX=1:2
             end
         end
         axis([-2.8 6 -1.5 2.5]);
-        set(gca,'YTick', [-1 0 1 2]);
+        set(gca,'YTick', [-1 0 1 2]);   
         set(gca,'XTick', [-2 0 2 4 6]);
         set(gca,'FontSize',8)
         set(gca,'FontName','Calibri')
         set(gca,'Linewidth',.75);    
-        if condIDX==1 tempTitle=['Fig2D' TimeList{timeIDX} '.png'];
-        else tempTitle=['Fig2E' TimeList{timeIDX} '.png'];
+        if condIDX==1 tempTitle=['Fig3E' TimeList{timeIDX} '.png'];
+        else tempTitle=['Fig3F' TimeList{timeIDX} '.png'];
         end
         
         export_fig (fighandle, '-m3.5', '-transparent',tempTitle);
