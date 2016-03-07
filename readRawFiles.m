@@ -1,5 +1,5 @@
 function [ data  ] = readRawFiles( badChannels, varargin)
-%READRAWFILES Reads in .mcd and MedPC and returns data struct
+%READRAWFILES Reads inn .mcd and MedPC and returns data struct
 %   Currently set up to read 30min RIRR sessions in any order
 
 
@@ -14,9 +14,14 @@ if nargin >= 3
     end
 elseif nargin == 1
     [filename,pathname] = uigetfile('*.mcd');
-    filenameMCD = [ pathname filename];
-    [filename,pathname] = uigetfile('*.txt');
-    filenameMedPC = [ pathname filename];
+    filenameMCD = [pathname filename];
+    testfileName=[filenameMCD(1:end-4) '.txt'];
+    if exist(testfileName,'file')
+        filenameMedPC = [testfileName];
+    else
+        [filename,pathname] = uigetfile('*.txt');
+        filenameMedPC = [ pathname filename];
+    end
 else
     display ('You did not provide a correct number of inputs');
 end
@@ -48,11 +53,11 @@ elseif strfind (filenameMedPC,'ContDeg')
     data.SessionType='ContDeg';
     numLevers=1;
     data.SessionLength=15;
-    %elseif strfind (filenameMedPC,'RIRR')
-else
-    data.SessionType='RIRR';
+elseif (strfind (filenameMedPC,'RRRI') || strfind (filenameMedPC,'RIRR'))
+    data.SessionType='RRRI';
     numLevers=2;
     data.SessionLength=30;
+else error('Unknown File ID, check the name');
 end
 
 %% Default Variables
@@ -436,10 +441,10 @@ save(newMCDStructName, 'data');
                     EvtTm{2}=[data.BeamBreakTS];
                 end
             else
-                Evt{1}(1:length(data.([curLever '_TS']),1))={[curLever '_U']};
+                Evt{1}(1:length(data.([curLever '_TS'])),1)={[curLever '_U']};
                 EvtTm{1}=[data.([curLever '_TS'])];
-                Evt{2}(1:length(data.([curLever 'Rf_TS']),1))={[curLever '_U']};
-                EvtTm{2}=[data.([curLever 'Rf_TS'])];
+                Evt{2}(1:length(data.([curLever '_Rf_TS'])),1)={[curLever '_U']};
+                EvtTm{2}=[data.([curLever '_Rf_TS'])];
                 if x == 1
                     Evt{3}(1:length(data.BeamBreakTS),1)={'BB'};
                     EvtTm{3}=[data.BeamBreakTS];
