@@ -352,24 +352,30 @@ save(newMCDStructName, 'data');
         end
         %% calculate linear offset
         lastIDXOfFirst = length(firstArrayTemp);
-        data.MedPC.offsetP = polyfit (firstArrayTemp, data.EventData(1:lastIDXOfFirst,1),1);
-        
+        if isempty(data.EventData)
+            temp = load('defaultOffset.mat');
+            data.MedPC.offsetP = temp;
+            clear temp;
+        else
+            data.MedPC.offsetP = polyfit (firstArrayTemp, data.EventData(1:lastIDXOfFirst,1),1);            
+        end
+        data.Lapish.behaveEvt_Raw ={};
+        data.Lapish.behaveEvtTm_Raw = [];
         curLever=data.FirstArray;
         curIDX = 1;
         lastIDX= lastIDXOfFirst;
-        for x = numLevers
+        for x = 1:numLevers
             if x==2
                 if strcmp(curLever,'LL')
                     curLever='RR';
                 else
                     curLever='LL';
                 end
-                curIDX = 1+(lastIDXOfFirst*x);
+                curIDX = 1+(lastIDXOfFirst);
                 lastIDX=length(data.EventData);
             end
             BaileyDataType();
-            data.Lapish.behaveEvt_Raw ={};
-            data.Lapish.behaveEvtTm_Raw = [];
+
             LapishDataType();
         end
         function BaileyDataType()
@@ -377,8 +383,10 @@ save(newMCDStructName, 'data');
             %Presses extracted from events
             BBVar='K';
             if strcmp(curLever,'LL')
+                LeverVar='C';
                 RfVar='I';
             else
+                LeverVar='G';
                 RfVar='E';
             end
             %Need to remove second lever press
@@ -391,7 +399,11 @@ save(newMCDStructName, 'data');
             %                 data.RL_TS = data.EventData(1:lastIDXOfFirst);
             %             end
             % get Press TS from event array
-            data.([curLever '_TS'])=data.EventData(curIDX:lastIDX,1);
+            if isempty(data.EventData)
+                 data.([curLever '_TS']) =  data.MedPC.offsetP(1)*data.MedPC.(LeverVar) +  data.MedPC.offsetP(2);
+            else
+                data.([curLever '_TS'])=data.EventData(curIDX:lastIDX,1);
+            end
             data.([curLever '_Rf_TS']) =  data.MedPC.offsetP(1)*data.MedPC.(RfVar) +  data.MedPC.offsetP(2);
             
             LevIDX = round(data.([curLever '_TS']) .* 400);
@@ -415,7 +427,7 @@ save(newMCDStructName, 'data');
                 %data.LL_Rf_IDX = round(LeftRefTS .* 400);
                 %data.RL_Rf_IDX = round(RightRefTS .* 400);
             end
-            if numLevers==1
+            if x==1
                 data.BeamBreakTS =  data.MedPC.offsetP(1)*data.MedPC.(BBVar) +  data.MedPC.offsetP(2);
                 data.Version = '04';
             end
@@ -452,10 +464,10 @@ save(newMCDStructName, 'data');
             end
             Evt=cat(1,Evt{:});
             EvtTm=cat(1,EvtTm{:});
-            [EvtTm,k] = sort(EvtTm);
-            Evt = Evt(k);
-            data.Lapish.behaveEvt_Raw=[data.Lapish.behaveEvt_Raw Evt];
-            data.Lapish.behaveEvtTm_Raw = [data.Lapish.behaveEvtTm_Raw EvtTm];
+            data.Lapish.behaveEvt_Raw=vertcat(data.Lapish.behaveEvt_Raw, Evt);
+            data.Lapish.behaveEvtTm_Raw = vertcat(data.Lapish.behaveEvtTm_Raw, EvtTm);
+            [data.Lapish.behaveEvtTm_Raw,k] = sort(data.Lapish.behaveEvtTm_Raw);
+            data.Lapish.behaveEvt_Raw = data.Lapish.behaveEvt_Raw(k);
             %             if ~strcmp(data.SessionType,'ContDeg')
             %                 Evt=cell(length(data.([curLever '_TS'])),1);
             %                 EvtTm=data.([curLever '_TS']);
