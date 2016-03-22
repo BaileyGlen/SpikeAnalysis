@@ -78,7 +78,7 @@ dataStruct=DPrime_Con(dataStruct ,'P');
         end
     end
     function eventStruct = getPeriEvent()
-        [Mtx, MlMtx, BlMtx, pEvt, pEvt_base]=mkPeriEvt(bEvt,'r',dataStruct.fileNameList{dayIdx},'zNo',PLOT, preEvt, postEvt, rasterBin);
+        [Mtx, MlMtx, BlMtx, pEvt, pEvt_base]=mkPyeperiEvt(bEvt,'r',dataStruct.fileNameList{dayIdx},'zNo',PLOT, preEvt, postEvt, rasterBin);
         eventStruct.Mtx = Mtx;
         eventStruct.MlMtx = MlMtx;
         eventStruct.BlMtx = BlMtx;
