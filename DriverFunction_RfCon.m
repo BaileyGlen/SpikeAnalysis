@@ -46,7 +46,7 @@ for dayIdx=1:2
         dataStruct.(curField)=getPCA(dataStruct.(curField));
     end
 end
-dataStruct=DPrime_Con(dataStruct ,'C');
+dataStruct=DPrime_3sec(dataStruct ,'C');
 % for x=1:4
 %     Day=DayVar{x};
 %     bEvt = EventVar{x};

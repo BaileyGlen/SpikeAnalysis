@@ -35,7 +35,6 @@ for t=1:4;
     %
     %         pEvtMtx_base=NEWpEvt_base;
     %
-    lLim=30;
     preRange=data.xA>=0&data.xA<=5;
     postRange=data.xA>=8&data.xA<=13;
     %% NEW BINS LISTED BELOW
