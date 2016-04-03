@@ -1,5 +1,5 @@
-function [Mtx, MnMtx, BlMtx, pEvt, pEvt_base, SurSpike]=mkPeriEvt ...
-    (evtTrigger,clr,DirList,zScore,PLOT, preEvt, postEvt, rasterBin)
+function [eventStruct]=mkPeriEvt ...
+    (evtTrigger,DirList,preEvt, postEvt, rasterBin)
 % MKPERIEVT generate the peri-event histogram around an event.
 % evtTrigger - The event to look for in the dataset, plus the type of
 % analysis. 
@@ -39,7 +39,8 @@ function [Mtx, MnMtx, BlMtx, pEvt, pEvt_base, SurSpike]=mkPeriEvt ...
 %%
 consumptiondelay = 15;
 
-
+eventStruct.AnimalIDList={};
+eventStruct.AnimalIDList_Dropped = {};
 numFiles = length(find(~cellfun(@isempty,DirList)));
 for XX=1:numFiles
     %% Load data
@@ -70,7 +71,7 @@ for XX=1:numFiles
             end
             mask = maskup;
         end
-    end   
+    end
     SurSpike={};
     % Mean Firing Rates
     %% Consumption
@@ -186,52 +187,66 @@ for XX=1:numFiles
     k=find(hRaster(:,end)~=0);
     % Making histogram of artifacts to reject
     artHist=histc(find(mask==0)/40000,rasterTm);
-    
-    for i=1:size(hRaster,2)-1;   % Number of spike trains
-        for j=1:length(k);     % Number of events
-            if k(j)-preEvt*(1/rasterBin)>0 &&  k(j)+postEvt*(1/rasterBin)<length(hRaster);
-                pEvt{XX,1}{i,1}(j,:)=smooth(hRaster(k(j)-preEvt*(1/rasterBin):k(j)+postEvt*(1/rasterBin),i),5);
-                if i==1 && (exist('k2'))
-                    SurSpike{XX,1}(j,1)=length(find(selEvt2>=selEvt(j)-3 & selEvt2<selEvt(j))); 
-                    SurSpike{XX,1}(j,2)=length(find(selEvt2>selEvt(j) & selEvt2<=selEvt(j)+3));
-                end
-                %%% BG - If histc bin has 1, set pEvt to NaN - this could be just
-                %%% the bin, or the entire row
-                needNaN = find(artHist(k(j)-preEvt*(1/rasterBin):k(j)+postEvt*(1/rasterBin)));
+    if ~isempty(k) %k isn't empty
+        
+        for i=1:size(hRaster,2)-1;   % Number of spike trains
+            for j=1:length(k);     % Number of events
+                if k(j)-preEvt*(1/rasterBin)>0 &&  k(j)+postEvt*(1/rasterBin)<length(hRaster);
+                    pEvt{XX,1}{i,1}(j,:)=smooth(hRaster(k(j)-preEvt*(1/rasterBin):k(j)+postEvt*(1/rasterBin),i),5);
+                    if i==1 && (exist('k2'))
+                        SurSpike{XX,1}(j,1)=length(find(selEvt2>=selEvt(j)-3 & selEvt2<selEvt(j)));
+                        SurSpike{XX,1}(j,2)=length(find(selEvt2>selEvt(j) & selEvt2<=selEvt(j)+3));
+                    end
+                    %%% BG - If histc bin has 1, set pEvt to NaN - this could be just
+                    %%% the bin, or the entire row
+                    needNaN = find(artHist(k(j)-preEvt*(1/rasterBin):k(j)+postEvt*(1/rasterBin)));
+                    %set the misisng Bins to NaN
+                    %arrayfun(@(QQ) pEvt{QQ,1}{i,1}(j,i) = NaN, find(artHist(k(j)-preEvt*(1/rasterBin):k(j)+postEvt*(1/rasterBin))));
+                    %                 for x= needNaN
+                    %                     pEvt{XX,1}{i,1}(j,needNaN)= NaN;
+                    %                 end
+                    % set the entire Event to NaN
+                    if needNaN
+                        pEvt{XX,1}{i,1}(j,:)= NaN;
+                    end
+                    %%% BG - end
+                end;
+            end;
+            %buildBaseline pEvt
+            %[baselineRange]=BaselineGen(behaveEvtTm_Raw, mask);
+            %behaveEvtTm_Raw(end+1,1) = 900;
+            %behaveEvtTm_Raw = sort(behaveEvtTm_Raw);
+            if mean(k<data.SessionLength*60)
+                diffArray = diff(behaveEvtTm_Raw(behaveEvtTm_Raw<(data.SessionLength*60/2)));
+            else
+                diffArray = diff(behaveEvtTm_Raw(behaveEvtTm_Raw>(data.SessionLength*60/2)));
+            end
+            emptyEpochsIDX = find(diffArray>20);
+            for j=1:size(emptyEpochsIDX,1)
+                centerpt = round(behaveEvtTm_Raw(emptyEpochsIDX(j))+ diffArray(emptyEpochsIDX(j))/2);
+                pEvt_base{XX,1}{i,1}(j,:)=smooth(hRaster((centerpt-6.5)*(1/rasterBin):(centerpt+6.5)*(1/rasterBin),i),5);
+                needNaN = find(artHist((centerpt-6.5)*(1/rasterBin):(centerpt+6.5)*(1/rasterBin)));
                 %set the misisng Bins to NaN
                 %arrayfun(@(QQ) pEvt{QQ,1}{i,1}(j,i) = NaN, find(artHist(k(j)-preEvt*(1/rasterBin):k(j)+postEvt*(1/rasterBin))));
-%                 for x= needNaN
-%                     pEvt{XX,1}{i,1}(j,needNaN)= NaN;
-%                 end
-                % set the entire Event to NaN
-                                if needNaN
-                                    pEvt{XX,1}{i,1}(j,:)= NaN;
-                                end
-                %%% BG - end
-            end;
-        end;
-        %buildBaseline pEvt
-        %[baselineRange]=BaselineGen(behaveEvtTm_Raw, mask);
-        %behaveEvtTm_Raw(end+1,1) = 900;
-        %behaveEvtTm_Raw = sort(behaveEvtTm_Raw);
-        if mean(k<data.SessionLength*60)
-            diffArray = diff(behaveEvtTm_Raw(behaveEvtTm_Raw<(data.SessionLength*60/2)));
-        else
-            diffArray = diff(behaveEvtTm_Raw(behaveEvtTm_Raw>(data.SessionLength*60/2)));
-        end
-        emptyEpochsIDX = find(diffArray>20);
-        for j=1:size(emptyEpochsIDX,1)
-            centerpt = round(behaveEvtTm_Raw(emptyEpochsIDX(j))+ diffArray(emptyEpochsIDX(j))/2);
-            pEvt_base{XX,1}{i,1}(j,:)=smooth(hRaster((centerpt-6.5)*(1/rasterBin):(centerpt+6.5)*(1/rasterBin),i),5);
-            needNaN = find(artHist((centerpt-6.5)*(1/rasterBin):(centerpt+6.5)*(1/rasterBin)));
-            %set the misisng Bins to NaN
-            %arrayfun(@(QQ) pEvt{QQ,1}{i,1}(j,i) = NaN, find(artHist(k(j)-preEvt*(1/rasterBin):k(j)+postEvt*(1/rasterBin))));
-            for x= needNaN
-                pEvt_base{XX,1}{i,1}(j,needNaN)= NaN;
+                for x= needNaN 
+                    pEvt_base{XX,1}{i,1}(j,needNaN)= NaN;
+                end
             end
-        end;
-    end;
-end;
+        end
+        if all(isnan(pEvt{XX,1}{1}))
+            pEvt{XX,1} = [];
+            pEvt_base{XX,1} = [];
+            eventStruct.AnimalIDList_Dropped{length(eventStruct.AnimalIDList_Dropped)+1}={data.AnimalID};
+        else
+            eventStruct.AnimalIDList{1,XX} = data.AnimalID;
+        end
+            
+    else
+        pEvt{XX,1} = [];
+        pEvt_base{XX,1} = [];
+        eventStruct.AnimalIDList_Dropped{length(eventStruct.AnimalIDList_Dropped)+1}={data.AnimalID};
+    end
+end
 
 for i=1:numFiles;
     dMtx{i,1}=cell2mat(pEvt{i});
@@ -242,9 +257,13 @@ for i=1:numFiles;
         BldMtx{i,1}(j,:)=nanmean(pEvt_base{i}{j},1);
     end
 end
-Mtx=cell2mat(dMtx);
-MnMtx = cell2mat(MndMtx);
-BlMtx=cell2mat(BldMtx);
+eventStruct.Mtx=cell2mat(dMtx);
+eventStruct.MlMtx = cell2mat(MndMtx);
+eventStruct.BlMtx=cell2mat(BldMtx);
+eventStruct.pEvt = pEvt;
+eventStruct.pEvt_base = pEvt_base;
+eventStruct.SurSpike = SurSpike;
+
 xA=[-1*preEvt:rasterBin:postEvt];
 
 % %% Plotting tool

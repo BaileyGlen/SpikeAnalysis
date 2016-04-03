@@ -1,0 +1,24 @@
+so, refactoring needs to happen here.
+Currently
+-Different files for RfCon, RFDel, Iso
+in
+ Driver - not really ok
+DPrime - not ok
+fig gen - not really ok
+
+and mkperi - doesn't use a real data struct
+
+need to refactor so that the things all use the meta data in the mat file,
+particularly data.SessionType and data.SessionLength
+Also, driver differences can probably be best handled by a "database" mat file
+
+Nothing I have done is enabling new baselines
+
+
+
+Specifics
+DPrime: Need to look closely at hardcoded epochs vs passed "type" parameter
+    VarList and CurVar seem duplicated
+
+
+all the stuff at the end of DPrime needs to come out somewhere else

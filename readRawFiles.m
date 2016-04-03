@@ -261,7 +261,8 @@ save(newMCDStructName, 'data');
     end
     function readMCD
         %% ----------Open .mcd----------------
-        [pathname, fileName, ext]=fileparts(which('nsMCDLibrary64.dll'));
+        %[pathname, fileName, ext]=fileparts(which('nsMCDLibrary64.dll'));
+        [pathname, fileName, ext]=fileparts(which('nsMCDLibrary.so'));
         ns_SetLibrary([pathname filesep fileName ext]);
         [nsresult, hfile] = ns_OpenFile(filenameMCD);
         [nsresult, FileInfo] = ns_GetFileInfo(hfile);
