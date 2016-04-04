@@ -32,15 +32,8 @@ dataStruct=DPrime_2Conditions(dataStruct ,eventTypeDPrime);
 
 %% Helper Functions
     function fileNameList = genFileNameList()
-        cd (folderLocation);
-        fileNameStruct = dir('*RI*final*');
-        for fileIDX = 1:length(fileNameStruct)
-            fileNameList{1,fileIDX} = fileNameStruct(fileIDX).name;
-        end
-        fileNameStruct = dir('*RR*final*');
-        for fileIDX = 1:length(fileNameStruct)
-            fileNameList{2,fileIDX} = fileNameStruct(fileIDX).name;
-        end
+        fileNameList{1,:} = getDirectoryFilenames (folderLocation,[],'*RI*final*');
+        fileNameList{1,:} = getDirectoryFilenames (folderLocation,[],'*RR*final*');    
     end
     function eventStruct = getPeriEvent(bEvt, fileNameList, preEvt, postEvt, rasterBin)
         [eventStruct]=mkPeriEvt(bEvt,fileNameList, preEvt, postEvt, rasterBin);

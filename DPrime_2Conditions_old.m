@@ -26,14 +26,9 @@ for t=1:2; % if this were like, data.CondList{}, it could read in the correct nu
         %the same
         data.preRange=data.xA>=8 & data.xA<=13;
         data.postRange=data.xA>=0 & data.xA<=5;
-    elseif strcmp(type,'P2')
-        data.preRange= (data.xA>= -3.0 & data.xA<= -0.25) ...
-                     | (data.xA>= 0.25 & data.xA<= 3.0);
-        data.postRange=data.xA>= -0.25 & data.xA<= 0.25;
     elseif (type=='P' || type=='I') %Press
         data.preRange=data.xA>=-3 & data.xA<=0;
         data.postRange=data.xA>=0 & data.xA<=3;
-    
     else error('myApp:argChk','Invalid Input for "Type"')
     end
     

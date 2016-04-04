@@ -9,7 +9,8 @@ temp=[ 0    0.4470    0.7410;...
     0.9290    0.6940    0.1250;...
     0.4940    0.1840    0.5560];
 newcmap = [temp(1,:);temp(3,:);temp(4,:);temp(2,:)];
-if ~isempty(strfind(data.DataSet,'ISO')) || ~isempty(strfind(data.DataSet,'RfDel'))
+if ~isempty(strfind(data.DataSet,'ISO')) ||...
+        ~isempty(strfind(data.DataSet,'RfDel'))
     xAxisMinMax = [-2.8 2.8];
 elseif  ~isempty(strfind(data.DataSet,'RfCon'))
     xAxisMinMax = [-2.8 13];

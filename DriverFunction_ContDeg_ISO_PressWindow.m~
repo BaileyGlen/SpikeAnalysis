@@ -1,4 +1,4 @@
-function [ dataStruct ] = DriverFunction_Deval_ISO(  )
+function [ dataStruct ] = DriverFunction_ContDeg_ISO_PressWindow(  )
 %FilesAndSettings This is used to initialize all the various settings, in order to
 %have a single place to control them from
 %   This is a basic function to set up all the settings for feeding into
@@ -7,10 +7,10 @@ function [ dataStruct ] = DriverFunction_Deval_ISO(  )
 
 %% Settings for creating the perievent mtx
 
-dataStruct.DataSet='Deval_ISO';
+dataStruct.DataSet='Deval_ISO_PressWindow';
 dataStruct.SessionType = 'Deval';
 eventTypeMkPeri='I';
-eventTypeDPrime='P';
+eventTypeDPrime='P2';
 preEvt=3;            % time prior to Event in sec
 postEvt=3;           % time post Event in sec
 rasterBin=.1;      % Size of bines for raster
