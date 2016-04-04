@@ -28,23 +28,11 @@ end
 
 data.MCD = filenameMCD;
 data.MedPCFile = filenameMedPC;
-%this should end up with a data file which looks like this...
-%{
-data.Animal
-data.Task
-data.FirstLever
-data.StartDate
-data.EndDate
-data.StartTime
-data.EndTime
-data.L_Press
-data.L_Ref
-data.R_Press
-data.R_Ref
-data.MagEntry
-data.Nex
-data.Nex. (there should be a template somewhere.
-%}
+
+
+%% FileName to settings
+% This loop is criticl for handling multiple types of files. Based upon the
+% filename, it will define a variety of settings
 if strfind (filenameMedPC,'Deval')
     data.SessionType='Deval';
     numLevers=1;
@@ -61,7 +49,6 @@ else error('Unknown File ID, check the name');
 end
 
 %% Default Variables
-
 totChannelList = 1:1:16; %should probably be calculated by readMCD
 data.ChannelList =  totChannelList(~ismember(totChannelList, badChannels));
 OpenedFile = filenameMCD(1:end-4);
@@ -70,32 +57,30 @@ newMCDStructName=[OpenedFile outputVer '.mat'];
 newMCDRawName=[OpenedFile '_raw' outputVer '.mat'];
 newBinName=[OpenedFile outputVer '.bin'];
 newOfiName=[OpenedFile outputVer '.ofi'];
+
 %% ---------Generating data struct from Files------------------
 % Because these functions are nested functions, the data struct can be
 % edited directly
+
+%Function calls
 readMedPC();
 readMCD();
 IDClippingArtifact(); %remove this for future files
 MCDMedPCSync();
-SOS=[];
-G=[];
-%Needed Changes for 15 min sessions-
-%-ID of session type from MedPC dynamically, from input to readRawFiles, or
-% from hard coding
-%-Modification of times (length of variables in particular)
-%-Changing of logic
 
 %% ----------Saving Files-------------------------------------------------
 %% Create bin file and ofi file
-load ('SpikesFilter01.mat');
 WriteBinary()
 %% save data Struct
 save(newMCDStructName, 'data');
 %% ----------END OF MAIN FUNCTION-----------------------------------------
 
+
+
+
+
 %% Nested Functions
 %These are nested functions so they can get variables from the parent
-%% Read MedPC
     function readMedPC ()
         %READMEDPC Helper Function for readRawFiles. Nested.
         %   This would be much smarter if it looked for the name of the
@@ -594,6 +579,10 @@ save(newMCDStructName, 'data');
     end
 %% Write Binary for Spike Sorter
     function WriteBinary()
+        % Load the filter
+        SOS=[]; %wtf?
+        G=[]; %wtf?
+        load ('SpikesFilter01.mat');
         scalefactor = (10^8);
         %% Open and Read template ofi
         fid = fopen('singleofi.ofi','r');

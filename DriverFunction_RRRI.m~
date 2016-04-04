@@ -15,13 +15,14 @@ preEvt=3;            % time prior to Event in sec
 postEvt=3;           % time post Event in sec
 rasterBin=.1;      % Size of bines for raster
 scheduleList={'LL','RL'};
-folderLocation='/home/bailey/Documents/MATLAB/Deval';
+folderLocation='/home/bailey/Documents/MATLAB/RRRI';
 
 %% Create the data Structure
 dataStruct.xA=[-1*preEvt:rasterBin:postEvt];
 dataStruct.fileNameList = genFileNameList;
 %% Main Loop
-for scheduleIDX=1:2
+for 1:length(fileNameList;
+for 
     curField=[scheduleList{scheduleIDX}];
     bEvt=[curField '_' eventTypeMkPeri];
     dataStruct.(curField)=getPeriEvent(bEvt,dataStruct.fileNameList(scheduleIDX,:),preEvt,postEvt,rasterBin);
@@ -32,8 +33,7 @@ dataStruct=DPrime_2Conditions(dataStruct ,eventTypeDPrime);
 
 %% Helper Functions
     function fileNameList = genFileNameList()
-        fileNameList{1,:} = getDirectoryFilenames (folderLocation,[],'*RI*final*');
-        fileNameList{1,:} = getDirectoryFilenames (folderLocation,[],'*RR*final*');    
+        fileNameList{1,:} = getDirectoryFilenames (folderLocation,[],'*RRRI*');
     end
     function eventStruct = getPeriEvent(bEvt, fileNameList, preEvt, postEvt, rasterBin)
         [eventStruct]=mkPeriEvt(bEvt,fileNameList, preEvt, postEvt, rasterBin);

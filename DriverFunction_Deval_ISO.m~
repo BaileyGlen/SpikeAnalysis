@@ -22,6 +22,7 @@ dataStruct.xA=[-1*preEvt:rasterBin:postEvt];
 dataStruct.fileNameList = genFileNameList;
 %% Main Loop
 for scheduleIDX=1:2
+    
     curField=[scheduleList{scheduleIDX}];
     bEvt=[curField '_' eventTypeMkPeri];
     dataStruct.(curField)=getPeriEvent(bEvt,dataStruct.fileNameList(scheduleIDX,:),preEvt,postEvt,rasterBin);
