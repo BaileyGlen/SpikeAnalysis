@@ -56,13 +56,9 @@ for groupIDX=1:length(groupList); % if this were like, data.CondList{}, it could
     
     %% Fill In some dataset values
     struct4dataset.SessionType(:) = {data.SessionType};
-    if strcmp( data.SessionType, 'RRRI' )
-        struct4dataset.timepoint(:) = {curVar(3:4)};
-        struct4dataset.Schedule(:) = {curVar(1:2)};
-    else
-        struct4dataset.Schedule(:) = {curVar};
-    end
-
+    struct4dataset.Schedule(:) = {curVar};
+    if 
+    struct4dataset.timepoint = cell(numRows,1);
     %% Get the DPrimes
     m=1;
     h = waitbar(0,'Initializing waitbar...');  %
@@ -255,7 +251,6 @@ if strcmp(data.SessionType, 'RRRI')
                          data.LL10.dataSet; data.RL10.dataSet];
 else data.output.dataSet=[data.LL04.dataSet; data.RL04.dataSet];
 end
-data.output.dataSet.timepoint = nominal(data.output.dataSet.timepoint);
 data.output.dataSet.SessionType = nominal(data.output.dataSet.SessionType);
 data.output.dataSet.Schedule = nominal(data.output.dataSet.Schedule);
 data.output.dataSet.AnimalID = nominal(data.output.dataSet.AnimalID);

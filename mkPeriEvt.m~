@@ -49,6 +49,7 @@ for XX=1:numFiles
         data=struct();
         data.SessionLength = 30;
         data.numLevers=2;
+        data.AnimalID = [M end-12:end
     elseif isfield (data,'Lapish')
         behaveEvt_Raw = data.Lapish.behaveEvt_Raw;
         behaveEvtTm_Raw = data.Lapish.behaveEvtTm_Raw;
@@ -74,7 +75,7 @@ for XX=1:numFiles
         end
         mask = maskup;
     end
-    data.AnimalID = ['M' DirList{XX}(2:3)];
+    
     SurSpike={};
     % Mean Firing Rates
     %% Consumption
