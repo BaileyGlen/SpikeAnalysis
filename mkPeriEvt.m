@@ -2,9 +2,9 @@ function [eventStruct]=mkPeriEvt ...
     (evtTrigger,DirList,preEvt, postEvt, rasterBin)
 % MKPERIEVT generate the peri-event histogram around an event.
 % evtTrigger - The event to look for in the dataset, plus the type of
-% analysis. 
+% analysis.
 % clr        - vestigial
-% DirList    - the list of files to process with this evt trigger 
+% DirList    - the list of files to process with this evt trigger
 % zScore     - vestigial
 % PLOT       - vestigial but is definitely worth reimplementing
 % preEvt     - time before event to capture in Secs
@@ -45,33 +45,36 @@ numFiles = length(find(~cellfun(@isempty,DirList)));
 for XX=1:numFiles
     %% Load data
     load(DirList{XX});
-    if exist('data')
-        if isfield (data,'Lapish')
-            behaveEvt_Raw = data.Lapish.behaveEvt_Raw;
-            behaveEvtTm_Raw = data.Lapish.behaveEvtTm_Raw;
-            STMtx = data.Lapish.STMtx;
-            mask = data.goodDetectionMask;
-            %set the first and last .2s to bad to remove filtfilt ripples
-            mask(1:400*.2) = 0;
-            mask(end-(400*.1):end) = 0;
-            %find the transitions to 0, and remove the points before. then do
-            %to 1
-            zerovals = find(diff(mask) == -1)+1;
-            for x = 1:length(zerovals)
-                mask(zerovals(x)-(.05*400):zerovals(x)) = 0;
-            end
-            %% these onevals aren't being used below and that makes no sense
-            onevals = find(diff(mask) == +1)+1;
-            for x = 1:length(onevals)
-                mask(onevals(x):onevals(x)+(.05*400)) = 0;
-            end
-            maskup = upsample(mask,100);
-            for x = 1:data.SessionLength*60*data.Freq/100
-                maskup(x*100-99:x*100) = mask (x);
-            end
-            mask = maskup;
+    if ~exist('data','var')
+        data=struct();
+        data.SessionLength = 30;
+        data.numLevers=2;
+    elseif isfield (data,'Lapish')
+        behaveEvt_Raw = data.Lapish.behaveEvt_Raw;
+        behaveEvtTm_Raw = data.Lapish.behaveEvtTm_Raw;
+        STMtx = data.Lapish.STMtx;
+        mask = data.goodDetectionMask;
+        %set the first and last .2s to bad to remove filtfilt ripples
+        mask(1:400*.2) = 0;
+        mask(end-(400*.1):end) = 0;
+        %find the transitions to 0, and remove the points before. then do
+        %to 1
+        zerovals = find(diff(mask) == -1)+1;
+        for x = 1:length(zerovals)
+            mask(zerovals(x)-(.05*400):zerovals(x)) = 0;
         end
+        %% these onevals aren't being used below and that makes no sense
+        onevals = find(diff(mask) == +1)+1;
+        for x = 1:length(onevals)
+            mask(onevals(x):onevals(x)+(.05*400)) = 0;
+        end
+        maskup = upsample(mask,100);
+        for x = 1:data.SessionLength*60*data.Freq/100
+            maskup(x*100-99:x*100) = mask (x);
+        end
+        mask = maskup;
     end
+    data.AnimalID = ['M' DirList{XX}(2:3)];
     SurSpike={};
     % Mean Firing Rates
     %% Consumption
@@ -95,16 +98,16 @@ for XX=1:numFiles
         hld=BB_ts(k);
     elseif strcmp(evtTrigger(4:end),'Sucrose_C')
         Press_raw=strcmp('RF',behaveEvt_Raw);
-%         if isempty(Press_raw)
-%             Press_raw=strcmp('RR_R',behaveEvt_Raw);
-%             display('Had to correct one RL to RR');
-%         end
+        %         if isempty(Press_raw)
+        %             Press_raw=strcmp('RR_R',behaveEvt_Raw);
+        %             display('Had to correct one RL to RR');
+        %         end
         Press_ts=behaveEvtTm_Raw(Press_raw);
         BB_raw=strcmp('BB',behaveEvt_Raw);
         BB_ts=behaveEvtTm_Raw(BB_raw);
         k=unique(cell2mat(arrayfun (@(x) find(BB_ts>x & BB_ts<x+ consumptiondelay,1), Press_ts, 'UniformOutput', false)));
         hld=BB_ts(k);
-    %% Isolated Presses
+        %% Isolated Presses
     elseif strcmp(evtTrigger,'RL_I')
         allEvents = {'BB' 'RF' 'RL_R' 'LL_R' 'RL_U' 'LL_U'};
         Press_raw=strmatch('RL_U',behaveEvt_Raw);
@@ -117,7 +120,7 @@ for XX=1:numFiles
         Other_raw= cellfun(@(y) max(y), cellfun(@(x) strcmp(allEvents,x),behaveEvt_Raw,'UniformOutput', false) );
         Other_ts=behaveEvtTm_Raw(Other_raw);
         k=cellfun(@(y) isempty(y), arrayfun (@(x) find(Other_ts>(x-3) & Other_ts<(x+3) & abs(Other_ts-x)>.0001), Press_ts, 'UniformOutput', false)  );
-        hld=Press_ts(k);      
+        hld=Press_ts(k);
         postEvt=3;
     elseif strcmp(evtTrigger,'LL_I')
         allEvents = {'BB' 'RF' 'RL_R' 'LL_R' 'RL_U' 'LL_U'};
@@ -126,53 +129,53 @@ for XX=1:numFiles
         Other_raw= cellfun(@(y) max(y), cellfun(@(x) strcmp(allEvents,x),behaveEvt_Raw,'UniformOutput', false) );
         Other_ts=behaveEvtTm_Raw(Other_raw);
         k=cellfun(@(y) isempty(y), arrayfun (@(x) find(Other_ts>(x-3) & Other_ts<(x+3) & abs(Other_ts-x)>.0001), Press_ts, 'UniformOutput', false)  );
-        hld=Press_ts(k);   
+        hld=Press_ts(k);
         postEvt=3;
-%     elseif strcmp(evtTrigger,'RL_Sucrose_I')
-%         allEvents = {'BB' 'RF' 'RL_U' 'LL_U'};
-%         Press_raw=strmatch('RL_U',behaveEvt_Raw);
-%         if isempty(Press_raw)
-%             display('Had to correct one RL to RR');
-%             Press_raw=strcmp('RR_U',behaveEvt_Raw);
-%             allEvents = {'BB' 'RF' 'RR_U' 'LL_U'};
-%         end
-%         Press_ts=behaveEvtTm_Raw(Press_raw);
-%         Other_raw= cellfun(@(y) max(y), cellfun(@(x) strcmp(allEvents,x),behaveEvt_Raw,'UniformOutput', false) );
-%         Other_ts=behaveEvtTm_Raw(Other_raw);
-%         k=cellfun(@(y) isempty(y), arrayfun (@(x) find(Other_ts>(x-3) & Other_ts<(x+3) & abs(Other_ts-x)>.0001), Press_ts, 'UniformOutput', false)  );
-%         hld=Press_ts(k);
-%         postEvt=3;
-%     elseif strcmp(evtTrigger,'LL_Sucrose_I')
-%         allEvents = {'BB' 'RF' 'RL_U' 'LL_U'};
-%         Press_raw=strmatch('LL_U',behaveEvt_Raw);
-%         Press_ts=behaveEvtTm_Raw(Press_raw);
-%         Other_raw= cellfun(@(y) max(y), cellfun(@(x) strcmp(allEvents,x),behaveEvt_Raw,'UniformOutput', false) );
-%         Other_ts=behaveEvtTm_Raw(Other_raw);
-%         k=cellfun(@(y) isempty(y), arrayfun (@(x) find(Other_ts>(x-3) & Other_ts<(x+3) & abs(Other_ts-x)>.0001), Press_ts, 'UniformOutput', false)  );
-%         hld=Press_ts(k);
-%         postEvt=3;
+        %     elseif strcmp(evtTrigger,'RL_Sucrose_I')
+        %         allEvents = {'BB' 'RF' 'RL_U' 'LL_U'};
+        %         Press_raw=strmatch('RL_U',behaveEvt_Raw);
+        %         if isempty(Press_raw)
+        %             display('Had to correct one RL to RR');
+        %             Press_raw=strcmp('RR_U',behaveEvt_Raw);
+        %             allEvents = {'BB' 'RF' 'RR_U' 'LL_U'};
+        %         end
+        %         Press_ts=behaveEvtTm_Raw(Press_raw);
+        %         Other_raw= cellfun(@(y) max(y), cellfun(@(x) strcmp(allEvents,x),behaveEvt_Raw,'UniformOutput', false) );
+        %         Other_ts=behaveEvtTm_Raw(Other_raw);
+        %         k=cellfun(@(y) isempty(y), arrayfun (@(x) find(Other_ts>(x-3) & Other_ts<(x+3) & abs(Other_ts-x)>.0001), Press_ts, 'UniformOutput', false)  );
+        %         hld=Press_ts(k);
+        %         postEvt=3;
+        %     elseif strcmp(evtTrigger,'LL_Sucrose_I')
+        %         allEvents = {'BB' 'RF' 'RL_U' 'LL_U'};
+        %         Press_raw=strmatch('LL_U',behaveEvt_Raw);
+        %         Press_ts=behaveEvtTm_Raw(Press_raw);
+        %         Other_raw= cellfun(@(y) max(y), cellfun(@(x) strcmp(allEvents,x),behaveEvt_Raw,'UniformOutput', false) );
+        %         Other_ts=behaveEvtTm_Raw(Other_raw);
+        %         k=cellfun(@(y) isempty(y), arrayfun (@(x) find(Other_ts>(x-3) & Other_ts<(x+3) & abs(Other_ts-x)>.0001), Press_ts, 'UniformOutput', false)  );
+        %         hld=Press_ts(k);
+        %         postEvt=3;
         %% Reinforcer Delivery
     elseif strcmp(evtTrigger(4:end),'Sucrose')
         k=strcmp('RF',behaveEvt_Raw);
-        hld=behaveEvtTm_Raw(k); 
+        hld=behaveEvtTm_Raw(k);
     else    % assumes 'R' for reinforcer
         k=strmatch(evtTrigger,behaveEvt_Raw);
         if isempty(k)
-           if strcmp(evtTrigger(1:2),'RL')
-               evtTrigger(1:2) = 'RR';
-               display('Had to correct one RL to RR');
-               k=strcmp(evtTrigger,behaveEvt_Raw);
-           end
+            if strcmp(evtTrigger(1:2),'RL')
+                evtTrigger(1:2) = 'RR';
+                display('Had to correct one RL to RR');
+                k=strcmp(evtTrigger,behaveEvt_Raw);
+            end
         end
-        hld=behaveEvtTm_Raw(k); 
+        hld=behaveEvtTm_Raw(k);
         if strcmp(evtTrigger(4), 'R')
             k2=strcmp([evtTrigger(1:3) 'U'], behaveEvt_Raw);
-            hld2=behaveEvtTm_Raw(k2); 
+            hld2=behaveEvtTm_Raw(k2);
         end
     end
     %selEvt=sort(cell2mat(hld'));
     selEvt=hld;
-    if (exist('k2')) 
+    if (exist('k2'))
         selEvt2=hld2;
     end
     % Tacking on behavrioal events to STMtx in last column to build rasters
@@ -228,7 +231,7 @@ for XX=1:numFiles
                 needNaN = find(artHist((centerpt-6.5)*(1/rasterBin):(centerpt+6.5)*(1/rasterBin)));
                 %set the misisng Bins to NaN
                 %arrayfun(@(QQ) pEvt{QQ,1}{i,1}(j,i) = NaN, find(artHist(k(j)-preEvt*(1/rasterBin):k(j)+postEvt*(1/rasterBin))));
-                for x= needNaN 
+                for x= needNaN
                     pEvt_base{XX,1}{i,1}(j,needNaN)= NaN;
                 end
             end
@@ -240,7 +243,7 @@ for XX=1:numFiles
         else
             eventStruct.AnimalIDList{1,XX} = data.AnimalID;
         end
-            
+        
     else
         pEvt{XX,1} = [];
         pEvt_base{XX,1} = [];
@@ -275,7 +278,7 @@ xA=[-1*preEvt:rasterBin:postEvt];
 %         case 'zNo'
 %             plot(xA,nanmean(Mtx),clr);hold on;
 %     end
-%     
+%
 %     figure();
 %     switch zScore
 %         case 'zYes'
@@ -291,7 +294,7 @@ xA=[-1*preEvt:rasterBin:postEvt];
 %         case 'zNo'
 %             plot(xA,nanmean(MnMtx),clr);hold on;
 %     end
-%     
+%
 %     figure();
 %     switch zScore
 %         case 'zYes'

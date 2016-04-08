@@ -1,4 +1,4 @@
-function [ dataStruct ] = DriverFunction_Deval_ISO_PressWindow(  )
+function [ dataStruct ] = DriverFunction_ContDeg_ISO_PressWindow(  )
 %FilesAndSettings This is used to initialize all the various settings, in order to
 %have a single place to control them from
 %   This is a basic function to set up all the settings for feeding into

@@ -1,17 +1,15 @@
-function data = DPrime_2Conditions(data,type, groupList)%% NEWEST VERSION OF SELECTIVITY_ D.N.Linsenbardt (November 2015) dlinsen1@gmail.com
+function data = DPrime_2Conditions(data,type)%% NEWEST VERSION OF SELECTIVITY_ D.N.Linsenbardt (November 2015) dlinsen1@gmail.com
 close all;
-
-for groupIDX=1:length(groupList); % if this were like, data.CondList{}, it could read in the correct number automatically
-    clearvars ('-except', 'data', 'groupIDX','type','groupList');
+for t=1:2; % if this were like, data.CondList{}, it could read in the correct number automatically
+    clearvars ('-except', 'data', 't','type');
     %cd 'D:\Users\Bailey\Documents\Dropbox\Mouse MEA\Mouse MEA\Mat\CL';
-    curVar = groupList{groupIDX};
-%     if groupIDX==1;
-%         %load('LLD04_pEvt02.mat');
-%         curVar = 'LL';
-%     elseif groupIDX==2;
-%         %load('LLD10_pEvt02.mat');
-%         curVar = 'RL';
-%     end;
+    if t==1;
+        %load('LLD04_pEvt02.mat');
+        curVar = 'LL';
+    elseif t==2;
+        %load('LLD10_pEvt02.mat');
+        curVar = 'RL';
+    end;
     
     % GETTING INTO SAME FORMAT AS MY PEVTMTX
     pEvt=data.(curVar).pEvt';
@@ -28,14 +26,9 @@ for groupIDX=1:length(groupList); % if this were like, data.CondList{}, it could
         %the same
         data.preRange=data.xA>=8 & data.xA<=13;
         data.postRange=data.xA>=0 & data.xA<=5;
-    elseif strcmp(type,'P2')
-        data.preRange= (data.xA>= -3.0 & data.xA< -0.5) ...
-                     | (data.xA> 0.5 & data.xA<= 3.0);
-        data.postRange=data.xA>= -0.5 & data.xA<= 0.5;
     elseif (type=='P' || type=='I') %Press
         data.preRange=data.xA>=-3 & data.xA<=0;
         data.postRange=data.xA>=0 & data.xA<=3;
-    
     else error('myApp:argChk','Invalid Input for "Type"')
     end
     
@@ -43,7 +36,6 @@ for groupIDX=1:length(groupList); % if this were like, data.CondList{}, it could
     numRows = size(data.(curVar).MlMtx,1);
     struct4dataset.SessionType = cell(numRows,1);
     struct4dataset.Schedule = cell(numRows,1);
-    struct4dataset.timepoint = cell(numRows,1);
     struct4dataset.AnimalID = cell(numRows,1);
     struct4dataset.CellID = cell(numRows,1);
     struct4dataset.numEvents = nan(numRows,1);
@@ -56,13 +48,7 @@ for groupIDX=1:length(groupList); % if this were like, data.CondList{}, it could
     
     %% Fill In some dataset values
     struct4dataset.SessionType(:) = {data.SessionType};
-    if strcmp( data.SessionType, 'RRRI' )
-        struct4dataset.timepoint(:) = {curVar(3:4)};
-        struct4dataset.Schedule(:) = {curVar(1:2)};
-    else
-        struct4dataset.Schedule(:) = {curVar};
-    end
-
+    struct4dataset.Schedule(:) = {curVar};
     %% Get the DPrimes
     m=1;
     h = waitbar(0,'Initializing waitbar...');  %
@@ -250,12 +236,8 @@ for groupIDX=1:length(groupList); % if this were like, data.CondList{}, it could
     data.(curVar).dataSet=struct2dataset(struct4dataset);
 end
 
-if strcmp(data.SessionType, 'RRRI')
-    data.output.dataSet=[data.LL04.dataSet; data.RL04.dataSet; ...
-                         data.LL10.dataSet; data.RL10.dataSet];
-else data.output.dataSet=[data.LL04.dataSet; data.RL04.dataSet];
-end
-data.output.dataSet.timepoint = nominal(data.output.dataSet.timepoint);
+
+data.output.dataSet=[data.LL.dataSet; data.RL.dataSet];
 data.output.dataSet.SessionType = nominal(data.output.dataSet.SessionType);
 data.output.dataSet.Schedule = nominal(data.output.dataSet.Schedule);
 data.output.dataSet.AnimalID = nominal(data.output.dataSet.AnimalID);

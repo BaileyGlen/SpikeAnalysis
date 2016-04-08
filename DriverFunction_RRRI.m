@@ -1,4 +1,4 @@
-function [ dataStruct ] = DriverFunction_Deval_ISO_PressWindow(  )
+function [ dataStruct ] = DriverFunction_Deval_ISO(  )
 %FilesAndSettings This is used to initialize all the various settings, in order to
 %have a single place to control them from
 %   This is a basic function to set up all the settings for feeding into
@@ -7,10 +7,10 @@ function [ dataStruct ] = DriverFunction_Deval_ISO_PressWindow(  )
 
 %% Settings for creating the perievent mtx
 
-dataStruct.DataSet='Deval_ISO_PressWindow';
+dataStruct.DataSet='Deval_ISO';
 dataStruct.SessionType = 'Deval';
 eventTypeMkPeri='I';
-eventTypeDPrime='P2';
+eventTypeDPrime='P';
 preEvt=3;            % time prior to Event in sec
 postEvt=3;           % time post Event in sec
 rasterBin=.1;      % Size of bines for raster
@@ -32,15 +32,8 @@ dataStruct=DPrime_2Conditions(dataStruct ,eventTypeDPrime);
 
 %% Helper Functions
     function fileNameList = genFileNameList()
-        cd (folderLocation);
-        fileNameStruct = dir('*RI*final*');
-        for fileIDX = 1:length(fileNameStruct)
-            fileNameList{1,fileIDX} = fileNameStruct(fileIDX).name;
-        end
-        fileNameStruct = dir('*RR*final*');
-        for fileIDX = 1:length(fileNameStruct)
-            fileNameList{2,fileIDX} = fileNameStruct(fileIDX).name;
-        end
+        fileNameList{1,:} = getDirectoryFilenames (folderLocation,[],'*RI*final*');
+        fileNameList{1,:} = getDirectoryFilenames (folderLocation,[],'*RR*final*');    
     end
     function eventStruct = getPeriEvent(bEvt, fileNameList, preEvt, postEvt, rasterBin)
         [eventStruct]=mkPeriEvt(bEvt,fileNameList, preEvt, postEvt, rasterBin);

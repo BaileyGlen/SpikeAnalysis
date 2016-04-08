@@ -1,4 +1,4 @@
-function [ dataStruct ] = DriverFunction_Deval_ISO_PressWindow(  )
+function [ dataStruct ] = DriverFunction_ContDeg_ISO_PressWindow(  )
 %FilesAndSettings This is used to initialize all the various settings, in order to
 %have a single place to control them from
 %   This is a basic function to set up all the settings for feeding into
@@ -7,15 +7,15 @@ function [ dataStruct ] = DriverFunction_Deval_ISO_PressWindow(  )
 
 %% Settings for creating the perievent mtx
 
-dataStruct.DataSet='Deval_ISO_PressWindow';
-dataStruct.SessionType = 'Deval';
+dataStruct.DataSet='ContDeg_ISO_PressWindow';
+dataStruct.SessionType = 'ContDeg';
 eventTypeMkPeri='I';
 eventTypeDPrime='P2';
 preEvt=3;            % time prior to Event in sec
 postEvt=3;           % time post Event in sec
 rasterBin=.1;      % Size of bines for raster
 scheduleList={'LL','RL'};
-folderLocation='/home/bailey/Documents/MATLAB/Deval';
+folderLocation='/home/bailey/Documents/MATLAB/ContDeg';
 
 %% Create the data Structure
 dataStruct.xA=[-1*preEvt:rasterBin:postEvt];

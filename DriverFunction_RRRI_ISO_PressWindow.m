@@ -1,4 +1,4 @@
-function [ dataStruct ] = DriverFunction_Deval_ISO_PressWindow(  )
+function [ dataStruct ] = DriverFunction_ContDeg_ISO_PressWindow(  )
 %FilesAndSettings This is used to initialize all the various settings, in order to
 %have a single place to control them from
 %   This is a basic function to set up all the settings for feeding into
@@ -7,40 +7,47 @@ function [ dataStruct ] = DriverFunction_Deval_ISO_PressWindow(  )
 
 %% Settings for creating the perievent mtx
 
-dataStruct.DataSet='Deval_ISO_PressWindow';
-dataStruct.SessionType = 'Deval';
+dataStruct.DataSet='RRRI_ISO_PressWindow';
+dataStruct.SessionType = 'RRRI';
 eventTypeMkPeri='I';
 eventTypeDPrime='P2';
 preEvt=3;            % time prior to Event in sec
 postEvt=3;           % time post Event in sec
 rasterBin=.1;      % Size of bines for raster
 scheduleList={'LL','RL'};
-folderLocation='/home/bailey/Documents/MATLAB/Deval';
+timepointList = {'04', '10'};
+folderLocation='/home/bailey/Documents/MATLAB/RRRI';
 
 %% Create the data Structure
 dataStruct.xA=[-1*preEvt:rasterBin:postEvt];
-dataStruct.fileNameList = genFileNameList;
+
 %% Main Loop
-for scheduleIDX=1:2
-    curField=[scheduleList{scheduleIDX}];
-    bEvt=[curField '_' eventTypeMkPeri];
-    dataStruct.(curField)=getPeriEvent(bEvt,dataStruct.fileNameList(scheduleIDX,:),preEvt,postEvt,rasterBin);
-    %dataStruct.(curField)=getPCA(dataStruct.(curField));
+dataStruct.fileNameList = {};
+for timepointIDX = 1:2
+    dataStruct.fileNameList{timepointIDX} = genFileNameList;
+    dataStruct.timepoint = timepointList{timepointIDX}; 
+    for scheduleIDX=1:2
+        curField=[scheduleList{scheduleIDX} timepointList{timepointIDX}];
+        bEvt=[scheduleList{scheduleIDX} '_' eventTypeMkPeri];
+        dataStruct.(curField)=getPeriEvent ...
+            (bEvt, dataStruct.fileNameList{timepointIDX}, preEvt, postEvt, rasterBin);
+        %dataStruct.(curField)=getPCA(dataStruct.(curField));
+    end
 end
-dataStruct=DPrime_2Conditions(dataStruct ,eventTypeDPrime);
+dataStruct=DPrime_2Conditions(dataStruct ,eventTypeDPrime,{'LL04', 'RL04', 'LL10', 'RL10'});
 
 
 %% Helper Functions
     function fileNameList = genFileNameList()
         cd (folderLocation);
-        fileNameStruct = dir('*RI*final*');
+        fileNameStruct = dir(['*D' timepointList{timepointIDX} '*.mat']);
         for fileIDX = 1:length(fileNameStruct)
             fileNameList{1,fileIDX} = fileNameStruct(fileIDX).name;
         end
-        fileNameStruct = dir('*RR*final*');
-        for fileIDX = 1:length(fileNameStruct)
-            fileNameList{2,fileIDX} = fileNameStruct(fileIDX).name;
-        end
+%         fileNameStruct = dir(['*D' timepointList{timepointIDX}]);
+%         for fileIDX = 1:length(fileNameStruct)
+%             fileNameList{2,fileIDX} = fileNameStruct(fileIDX).name;
+%         end
     end
     function eventStruct = getPeriEvent(bEvt, fileNameList, preEvt, postEvt, rasterBin)
         [eventStruct]=mkPeriEvt(bEvt,fileNameList, preEvt, postEvt, rasterBin);

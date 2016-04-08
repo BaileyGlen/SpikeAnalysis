@@ -1,27 +1,36 @@
-function [ dataStruct ] = DriverFunction_Deval_ISO_PressWindow(  )
+%function [ dataStruct ] = DriverFunction_Deval_ISO(  )
 %FilesAndSettings This is used to initialize all the various settings, in order to
 %have a single place to control them from
 %   This is a basic function to set up all the settings for feeding into
 %   the other functions
 
 
-%% Settings for creating the perievent mtx
+Load the summary datafile
 
-dataStruct.DataSet='Deval_ISO_PressWindow';
+
+%% General Settings 
+
 dataStruct.SessionType = 'Deval';
+data.leverList =  {'Left','Right'};
+data.scheduleList = {'RI','RR'};
+folderLocation='/home/bailey/Documents/MATLAB/RRRI';
+
+%% Isolated Presses
+
+dataStruct.DataSet='Deval_ISO';
 eventTypeMkPeri='I';
-eventTypeDPrime='P2';
+eventTypeDPrime='P';
 preEvt=3;            % time prior to Event in sec
 postEvt=3;           % time post Event in sec
 rasterBin=.1;      % Size of bines for raster
-scheduleList={'LL','RL'};
-folderLocation='/home/bailey/Documents/MATLAB/Deval';
+
 
 %% Create the data Structure
 dataStruct.xA=[-1*preEvt:rasterBin:postEvt];
 dataStruct.fileNameList = genFileNameList;
 %% Main Loop
-for scheduleIDX=1:2
+for 1:length(fileNameList;
+for 
     curField=[scheduleList{scheduleIDX}];
     bEvt=[curField '_' eventTypeMkPeri];
     dataStruct.(curField)=getPeriEvent(bEvt,dataStruct.fileNameList(scheduleIDX,:),preEvt,postEvt,rasterBin);
@@ -32,15 +41,7 @@ dataStruct=DPrime_2Conditions(dataStruct ,eventTypeDPrime);
 
 %% Helper Functions
     function fileNameList = genFileNameList()
-        cd (folderLocation);
-        fileNameStruct = dir('*RI*final*');
-        for fileIDX = 1:length(fileNameStruct)
-            fileNameList{1,fileIDX} = fileNameStruct(fileIDX).name;
-        end
-        fileNameStruct = dir('*RR*final*');
-        for fileIDX = 1:length(fileNameStruct)
-            fileNameList{2,fileIDX} = fileNameStruct(fileIDX).name;
-        end
+        fileNameList{1,:} = getDirectoryFilenames (folderLocation,[],'*RRRI*');
     end
     function eventStruct = getPeriEvent(bEvt, fileNameList, preEvt, postEvt, rasterBin)
         [eventStruct]=mkPeriEvt(bEvt,fileNameList, preEvt, postEvt, rasterBin);
