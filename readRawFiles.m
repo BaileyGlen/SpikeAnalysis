@@ -248,7 +248,12 @@ save(newMCDStructName, 'data');
         %% ----------Open .mcd----------------
         %[pathname, fileName, ext]=fileparts(which('nsMCDLibrary64.dll'));
         [pathname, fileName, ext]=fileparts(which('nsMCDLibrary.so'));
-        ns_SetLibrary([pathname filesep fileName ext]);
+        if ns_SetLibrary([pathname filesep fileName ext]) < 0 
+            [pathname, fileName, ext]=fileparts(which('nsMCDLibrary64.dll'));
+            if ns_SetLibrary([pathname filesep fileName ext]) < 0 
+                error('MCDImport not working, missing dll');
+            end
+        end
         [nsresult, hfile] = ns_OpenFile(filenameMCD);
         [nsresult, FileInfo] = ns_GetFileInfo(hfile);
         [nsresult, EntityInfo] = ns_GetEntityInfo(hfile, [1 : 1 : FileInfo.EntityCount]);
