@@ -1,4 +1,4 @@
-function [ dataStruct ] = DriverFunction_RRRI_ISO_PressWindow(  )
+function [ dataStruct ] = DriverFunction_RRRI_rfdel_z3s_press(  )
 %FilesAndSettings This is used to initialize all the various settings, in order to
 %have a single place to control them from
 %   This is a basic function to set up all the settings for feeding into
@@ -7,9 +7,9 @@ function [ dataStruct ] = DriverFunction_RRRI_ISO_PressWindow(  )
 
 %% Settings for creating the perievent mtx
 
-dataStruct.DataSet='RRRI_ISO_PressWindow';
+dataStruct.DataSet='RRRI_rfdel_z3s_press';
 dataStruct.SessionType = 'RRRI';
-eventTypeMkPeri='I';
+eventTypeMkPeri='P';
 eventTypeDPrime='P2';
 preEvt=3;            % time prior to Event in sec
 postEvt=3;           % time post Event in sec
