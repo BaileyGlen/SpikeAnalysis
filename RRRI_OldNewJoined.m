@@ -1,8 +1,15 @@
 function fileJoiner(filenameTXT,filenameMAT)                                 
 %RRRI_OldNewJoined joining "ChrisStyle" and "OldStruct"
 %Add data.SessionType
+
+data.SessionType = 'RRRI'
+
 %Add data.SessionLength
+
+data.SessionLength = 30
+
 %Add data.AnimalID
+% Add data.DayVar
 
 
 
