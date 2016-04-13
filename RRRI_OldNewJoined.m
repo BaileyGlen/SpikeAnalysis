@@ -23,6 +23,9 @@ for fileIDX = 1:length(fileStruct)
     %update display
     display(['Joining ' fileName]);
     
+    % opem up the existing data struct for the current animal/session
+    load(fileName);
+    
     %Add data.SessionType
     
     data.SessionType = 'RRRI';
@@ -44,8 +47,7 @@ for fileIDX = 1:length(fileStruct)
     spikeDataset = importSpikesTXT(filenameTXT);
     spikeDataset = sortrows(spikeDataset);
     
-    % opem up the existing data struct for the current animal/session
-    load(filenameMAT);
+  
     
     %Save AnimalID
     data.AnimalID = filenameMAT(startIDX:endIDX);
