@@ -1,4 +1,4 @@
-function fileJoiner(filenameTXT,filenameMAT)                                 
+function RRRI_OldNewJoined(structdir,chrisdir)
 %fileJoiner Joins spikesorting TXT and MCD
 %   This version currently requires a header. For the header Cell and
 %   delimiter, you can leave these empty []
@@ -23,18 +23,17 @@ function fileJoiner(filenameTXT,filenameMAT)
 
 
 display(['Joining ' filenameMAT]);
-
+fileNameStruct = dir(['*D' timepointList{timepointIDX} '*.mat']);
+for fileIDX = 1:length(fileNameStruct)
+    fileNameList{1,fileIDX} = fileNameStruct(fileIDX).name;
+end
 % http://regexr.com/
 % Parse the Filename
+load(filenameMAT);
 [startIDX, endIDX] = regexp(filenameTXT,'_[mM]\d{2,3}_');
 startIDX = startIDX+1;
 endIDX = endIDX-1;
-% Read in spike data from offline spike sorter as a dataset
-spikeDataset = importSpikesTXT(filenameTXT);
-spikeDataset = sortrows(spikeDataset);
 
-% opem up the existing data struct for the current animal/session
-load(filenameMAT);
 
 %Save AnimalID
 data.AnimalID = filenameMAT(startIDX:endIDX);
@@ -51,7 +50,7 @@ save([filenameMAT(startIDX:end-4) '_final.mat'],'data');
 
 display(['Completed joining ' filenameMAT]);
 
-    % Helper Function to get chris sytle spike MTX
+% Helper Function to get chris sytle spike MTX
     function STMtx = getSTMtx(spikeDataset)
         uniqueIDs = unique(spikeDataset.UID);
         numUniqueCells = length(uniqueIDs);
