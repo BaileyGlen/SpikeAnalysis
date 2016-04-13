@@ -6,8 +6,8 @@ if ispc; userdir= getenv('USERPROFILE');
 else userdir= getenv('HOME');
 end
 boxdir = [userdir '\Box Sync\mea_data\rrri_01\processing\rrri\spiketrain\'];
-datadir = [userdir boxdir '_mat'];
-outputdir = [userdir boxdir 'z3s_press'];
+datadir = [boxdir '_mat'];
+outputdir = [boxdir 'z3s_press'];
 % Get the current folder name
 originalFolder = cd;
 %set to the data dir
