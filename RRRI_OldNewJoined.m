@@ -1,25 +1,9 @@
 function fileJoiner(filenameTXT,filenameMAT)                                 
-%fileJoiner Joins spikesorting TXT and MCD
-%   This version currently requires a header. For the header Cell and
-%   delimiter, you can leave these empty []
+%RRRI_OldNewJoined joining "ChrisStyle" and "OldStruct"
+%Add data.SessionType
+%Add data.SessionLength
+%Add data.AnimalID
 
-% if isempty(headerCell)
-%headerCell = {'Channel','Unit','Timestamp'};
-% end
-% if isempty(delimiter)
-% end
-
-% fileID = fopen(filenameTXT,'r');
-% assert(fileID>=3, 'Did not Open Correctly');
-% temptext = strsplit(fgetl(fileID),delimiter);
-% headerList = parseHeader(temptext, headerCell);
-%
-%     function list = parseHeader(fileHeaders, templateHeaders)
-%         list = cellfun(@(x) find(strcmp(x,fileHeaders)),templateHeaders, ...
-%             'UniformOutput', false);
-%         assert(~isempty(list), ...
-%             ['Not all templateHeaders were found in the fileHeader.' ...
-%             'Is there a header?']);
 
 
 display(['Joining ' filenameMAT]);
