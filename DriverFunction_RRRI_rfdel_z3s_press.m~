@@ -16,17 +16,17 @@ postEvt=3;           % time post Event in sec
 rasterBin=.1;      % Size of bines for raster
 scheduleList={'LL','RL'};
 timepointList = {'04', '10'};
-
-folderLocation='/home/bailey/Documents/MATLAB/RRRI';
-
-if ispc; userdir= getenv('USERPROFILE'); 
-else userdir= getenv('HOME'); 
+if ispc 
+    userdir= getenv('USERPROFILE');
+    datadir = [userdir '\Box Sync\mea_data\rrri_01\processing\rrri\spiketrain\_mat\'];
+    outputdir = [userdir '\Box Sync\mea_data\rrri_01\processing\rrri\spiketrain\z3s_press\'];
+else
+    userdir= getenv('HOME');
+    datadir = [userdir '/Box Sync/mea_data/rrri_01/processing/rrri/spiketrain/_mat/'];
+    outputdir = [userdir '/Box Sync/mea_data/rrri_01/processing/rrri/spiketrain/z3s_press/'];
 end
-boxdir = [userdir '\Box Sync\mea_data\rrri_01\processing\rrri\spiketrain\'];
-datadir = [userdir boxdir '_mat'];
-outputdir = [userdir boxdir 'z3s_press'];
-    
-    box
+%datadir='/home/bailey/Documents/MATLAB/RRRI';
+
 %% Create the data Structure
 dataStruct.xA=[-1*preEvt:rasterBin:postEvt];
 
@@ -44,11 +44,11 @@ for timepointIDX = 1:2
     end
 end
 dataStruct=DPrime_2Conditions(dataStruct ,eventTypeDPrime,{'LL04', 'RL04', 'LL10', 'RL10'});
-
+save([outputdir dataStruct.DataSet], dataStruct);
 
 %% Helper Functions
     function fileNameList = genFileNameList()
-        cd (folderLocation);
+        cd (datadir);
         fileNameStruct = dir(['*D' timepointList{timepointIDX} '*.mat']);
         for fileIDX = 1:length(fileNameStruct)
             fileNameList{1,fileIDX} = fileNameStruct(fileIDX).name;
