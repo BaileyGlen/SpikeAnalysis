@@ -1,16 +1,18 @@
-function RRRI_OldNewJoined()
+%function RRRI_OldNewJoined()
 %RRRI_OLDNEWJOINED joining "ChrisStyle" and "OldStruct"
 
 %Check the OS and get the relative paths - Reuse this code!
 if ispc 
     userdir= getenv('USERPROFILE');
-    boxdir = [userdir '\Box Sync\mea_data\rrri_01\processing\rrri\spiketrain\'];
+    boxdir = [userdir '\Box Sync\mea_data\rrri_01\processing\rrri\spiketrain\_mat\'];
+    outputdir = [userdir '\Box Sync\mea_data\rrri_01\processing\rrri\spiketrain\z3s_press\'];
 else
     userdir= getenv('HOME');
-    boxdir = [userdir '/Box Sync/mea_data/rrri_01/processing/rrri/spiketrain/'];
+    boxdir = [userdir '/Box Sync/mea_data/rrri_01/processing/rrri/spiketrain/_mat/'];
+    outputdir = [userdir '/Box Sync/mea_data/rrri_01/processing/rrri/spiketrain/z3s_press/'];
 end
-    datadir = [boxdir '_mat'];
-    outputdir = [boxdir 'z3s_press'];
+    datadir = [boxdir 'OldStruct'];
+
 
 
 
@@ -22,6 +24,10 @@ cd (datadir);
 % Get the names of the files in the directory
 fileStruct = dir('*.mat');
 
+if isempty (fileStruct) 
+   error ('The fileStruct is empty');
+end
+
 %Enter the main loop, once per file
 for fileIDX = 1:length(fileStruct)
     %Get the Filename
@@ -30,9 +36,9 @@ for fileIDX = 1:length(fileStruct)
     display(['Joining ' fileName]);
     
     % opem up the existing data struct for the current animal/session
-    load([datadir 'OldStruct\' fileName]);
-    data.Lapish = load([datadir 'ChrisStyle\' fileName]);
-    spikeDataset = importSpikesTXT([datadir 'Spikes\' fileName]);
+    load([boxdir 'OldStruct\' fileName]);
+    data.Lapish = load([boxdir 'ChrisStyle\' fileName]);
+    spikeDataset = importSpikesTXT([boxdir 'Spikes\' fileName(1:end-4) '.txt']);
     
     %Add data.SessionType
     
@@ -44,9 +50,11 @@ for fileIDX = 1:length(fileStruct)
     
     % Add data.AnimalID
     % format - MXX
-    data.AnimalID = fileName(startIDX:endIDX);
+    data.AnimalID = ['M' fileName(2:3)];
     % Add data.DayVar
     % format - DXX
+    data.timepoint = fileName(5:6);
+  
 
     % Add spikeDataset
     spikeDataset = sortrows(spikeDataset);
@@ -55,9 +63,9 @@ for fileIDX = 1:length(fileStruct)
     data.spikes=spikeDataset;
     
     % resave the dataStruct
-    save([datadir fileName '_final.mat'],'data');
+    save([datadir fileName(1:end-4) '_final.mat'],'data');
     
-    display(['Completed joining ' filenName]);
+    display(['Completed joining ' fileName]);
     
 end
 
