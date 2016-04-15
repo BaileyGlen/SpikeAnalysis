@@ -4,14 +4,13 @@
 %Check the OS and get the relative paths - Reuse this code!
 if ispc 
     userdir= getenv('USERPROFILE');
-    boxdir = [userdir '\Box Sync\mea_data\rrri_01\processing\rrri\spiketrain\_mat\'];
+    datadir = [userdir '\Box Sync\mea_data\rrri_01\processing\rrri\spiketrain\_mat\'];
     outputdir = [userdir '\Box Sync\mea_data\rrri_01\processing\rrri\spiketrain\z3s_press\'];
 else
     userdir= getenv('HOME');
-    boxdir = [userdir '/Box Sync/mea_data/rrri_01/processing/rrri/spiketrain/_mat/'];
+    datadir = [userdir '/Box Sync/mea_data/rrri_01/processing/rrri/spiketrain/_mat/'];
     outputdir = [userdir '/Box Sync/mea_data/rrri_01/processing/rrri/spiketrain/z3s_press/'];
 end
-    datadir = [boxdir 'OldStruct'];
 
 
 
@@ -19,7 +18,7 @@ end
 % Get the current folder name
 originaldir = cd;
 %set to the data dir
-cd (datadir);
+cd ([datadir 'OldStruct' filesep]);
 %fileNameStruct = dir(['*D' timepointList{timepointIDX} '*.mat']);
 % Get the names of the files in the directory
 fileStruct = dir('*.mat');
@@ -36,9 +35,9 @@ for fileIDX = 1:length(fileStruct)
     display(['Joining ' fileName]);
     
     % opem up the existing data struct for the current animal/session
-    load([boxdir 'OldStruct\' fileName]);
-    data.Lapish = load([boxdir 'ChrisStyle\' fileName]);
-    spikeDataset = importSpikesTXT([boxdir 'Spikes\' fileName(1:end-4) '.txt']);
+    load([datadir 'OldStruct' filesep fileName]);
+    data.Lapish = load([datadir 'ChrisStyle' filesep fileName]);
+    spikeDataset = importSpikesTXT([datadir 'Spikes' filesep fileName(1:end-4) '.txt']);
     
     %Add data.SessionType
     
