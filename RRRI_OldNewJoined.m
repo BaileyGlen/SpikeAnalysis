@@ -1,15 +1,21 @@
-function fileJoiner(filenameTXT,filenameMAT)
+function RRRI_OldNewJoined()
 %RRRI_OLDNEWJOINED joining "ChrisStyle" and "OldStruct"
 
-%Check the OS and get the relative paths
-if ispc; userdir= getenv('USERPROFILE');
-else userdir= getenv('HOME');
+%Check the OS and get the relative paths - Reuse this code!
+if ispc 
+    userdir= getenv('USERPROFILE');
+    boxdir = [userdir '\Box Sync\mea_data\rrri_01\processing\rrri\spiketrain\'];
+else
+    userdir= getenv('HOME');
+    boxdir = [userdir '/Box Sync/mea_data/rrri_01/processing/rrri/spiketrain/'];
 end
-boxdir = [userdir '\Box Sync\mea_data\rrri_01\processing\rrri\spiketrain\'];
-datadir = [boxdir '_mat'];
-outputdir = [boxdir 'z3s_press'];
+    datadir = [boxdir '_mat'];
+    outputdir = [boxdir 'z3s_press'];
+
+
+
 % Get the current folder name
-originalFolder = cd;
+originaldir = cd;
 %set to the data dir
 cd (datadir);
 %fileNameStruct = dir(['*D' timepointList{timepointIDX} '*.mat']);
@@ -24,7 +30,9 @@ for fileIDX = 1:length(fileStruct)
     display(['Joining ' fileName]);
     
     % opem up the existing data struct for the current animal/session
-    load(fileName);
+    load([datadir 'OldStruct\' fileName]);
+    data.Lapish = load([datadir 'ChrisStyle\' fileName]);
+    spikeDataset = importSpikesTXT([datadir 'Spikes\' fileName]);
     
     %Add data.SessionType
     
@@ -34,48 +42,23 @@ for fileIDX = 1:length(fileStruct)
     
     data.SessionLength = 30;
     
-    %Add data.AnimalID
+    % Add data.AnimalID
+    % format - MXX
+    data.AnimalID = fileName(startIDX:endIDX);
     % Add data.DayVar
-    
-    
-    % http://regexr.com/
-    % Parse the Filename
-    [startIDX, endIDX] = regexp(filenameTXT,'_[mM]\d{2,3}_');
-    startIDX = startIDX+1;
-    endIDX = endIDX-1;
-    % Read in spike data from offline spike sorter as a dataset
-    spikeDataset = importSpikesTXT(filenameTXT);
+    % format - DXX
+
+    % Add spikeDataset
     spikeDataset = sortrows(spikeDataset);
-    
-  
-    
-    %Save AnimalID
-    data.AnimalID = filenameMAT(startIDX:endIDX);
     
     % put the raw spike dataset into the data struct
     data.spikes=spikeDataset;
     
-    % put the lapisch type spike mtx into data struct
-    data.Lapish.STMtx = getSTMtx(spikeDataset);
-    
-    
     % resave the dataStruct
-    save([filenameMAT(startIDX:end-4) '_final.mat'],'data');
+    save([datadir fileName '_final.mat'],'data');
     
-    display(['Completed joining ' filenameMAT]);
+    display(['Completed joining ' filenName]);
     
 end
-% Helper Function to get chris sytle spike MTX
-    function STMtx = getSTMtx(spikeDataset)
-        uniqueIDs = unique(spikeDataset.UID);
-        numUniqueCells = length(uniqueIDs);
-        maxSpikesPerCell = max(arrayfun (@(x) length(spikeDataset(spikeDataset.UID==x,:)),uniqueIDs));
-        STMtx = nan(maxSpikesPerCell,numUniqueCells);
-        temp=arrayfun (@(x) spikeDataset.Timestamp(spikeDataset.UID==x,:),uniqueIDs,'UniformOutput',false);
-        for x=1:numUniqueCells
-            y=length(temp{x});
-            STMtx(1:y,x)=temp{x};
-        end
-    end
 
-end
+cd (originaldir);
