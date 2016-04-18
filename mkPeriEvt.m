@@ -10,7 +10,8 @@ function [eventStruct]=mkPeriEvt ...
 % preEvt     - time before event to capture in Secs
 % postEvt    - time after event to capture
 % rasterBin  - the size of the individual bin
-
+%Event Triggers:
+%
 
 %left lever  = RI  or  LL
 %right elver = RR  or  RL
@@ -160,7 +161,7 @@ for XX=1:numFiles
     elseif strcmp(evtTrigger(4:end),'Sucrose')
         k=strcmp('RF',behaveEvt_Raw);
         hld=behaveEvtTm_Raw(k);
-    else    % assumes 'R' for reinforcer
+    elseif strcmp(evtTrigger(4), 'R')     % assumes 'R' for reinforcer
         k=strmatch(evtTrigger,behaveEvt_Raw);
         if isempty(k)
             if strcmp(evtTrigger(1:2),'RL')
@@ -174,6 +175,8 @@ for XX=1:numFiles
             k2=strcmp([evtTrigger(1:3) 'U'], behaveEvt_Raw);
             hld2=behaveEvtTm_Raw(k2);
         end
+    else
+        error(['The evtTrigger provided is inaccurate:,' evtTrigger]);
     end
     %selEvt=sort(cell2mat(hld'));
     selEvt=hld;
@@ -265,6 +268,7 @@ if ~isempty(pEvt)
     eventStruct.Mtx=cell2mat(dMtx);
     eventStruct.MlMtx = cell2mat(MndMtx);
     eventStruct.BlMtx=cell2mat(BldMtx);
+    
 end
 eventStruct.pEvt = pEvt;
 eventStruct.pEvt_base = pEvt_base;

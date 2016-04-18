@@ -9,7 +9,7 @@ function [ dataStruct ] = DriverFunction_RRRI_rfcon_prepost(  )
 
 dataStruct.DataSet='rfcon_prepost';
 dataStruct.SessionType = 'RRRI';
-eventTypeMkPeri='R'; 
+eventTypeMkPeri='C'; 
 eventTypeDPrime='C';
 preEvt=3;            % time prior to Event in sec
 postEvt=13;           % time post Event in sec
