@@ -1,4 +1,4 @@
-function [ dataStruct ] = DriverFunction_RRRI_rfcon_prepost(  )
+function [ dataStruct ] = DriverFunction_RRRI_rfdel_z10s_prepost(  )
 %FilesAndSettings This is used to initialize all the various settings, in order to
 %have a single place to control them from
 %   This is a basic function to set up all the settings for feeding into
@@ -7,12 +7,12 @@ function [ dataStruct ] = DriverFunction_RRRI_rfcon_prepost(  )
 
 %% Settings for creating the perievent mtx
 
-dataStruct.DataSet='rfcon_prepost';
+dataStruct.DataSet='rfdel_z10s_prepost';
 dataStruct.SessionType = 'RRRI';
-eventTypeMkPeri='C'; 
-eventTypeDPrime='C';
+eventTypeMkPeri='R'; 
+eventTypeDPrime='P';
 preEvt=3;            % time prior to Event in sec
-postEvt=13;           % time post Event in sec
+postEvt=10;           % time post Event in sec
 rasterBin=.1;      % Size of bines for raster
 scheduleList={'LL','RL'};
 timepointList = {'04', '10'};
@@ -49,7 +49,6 @@ dataStruct=DPrime_2Conditions(dataStruct ,eventTypeDPrime,{'LL04', 'RL04', 'LL10
 cd (outputdir);
 save( dataStruct.DataSet, 'dataStruct');
 export(dataStruct.output.dataSet, 'File', [dataStruct.DataSet '.csv'], 'Delimiter', ',');
-FigureGenerator( dataStruct);
 %% Helper Functions
     function fileNameList = genFileNameList()
         cd (datadir);
