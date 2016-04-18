@@ -1,4 +1,4 @@
-function [ dataStruct ] = DriverFunction_RRRI_rfdel_z3s_press(  )
+function [ dataStruct ] = DriverFunction_RRRI_rfdel_z13s_prepost(  )
 %FilesAndSettings This is used to initialize all the various settings, in order to
 %have a single place to control them from
 %   This is a basic function to set up all the settings for feeding into
@@ -7,23 +7,25 @@ function [ dataStruct ] = DriverFunction_RRRI_rfdel_z3s_press(  )
 
 %% Settings for creating the perievent mtx
 
-dataStruct.DataSet='RRRI_rfdel_z3s_press';
+dataStruct.DataSet='rfdel_z13s_prepost';
 dataStruct.SessionType = 'RRRI';
-eventTypeMkPeri='P';
-eventTypeDPrime='P2';
+eventTypeMkPeri='R'; 
+eventTypeDPrime='P';
 preEvt=3;            % time prior to Event in sec
-postEvt=3;           % time post Event in sec
+postEvt=13;           % time post Event in sec
 rasterBin=.1;      % Size of bines for raster
 scheduleList={'LL','RL'};
 timepointList = {'04', '10'};
 if ispc 
     userdir= getenv('USERPROFILE');
     datadir = [userdir '\Box Sync\mea_data\rrri_01\processing\rrri\spiketrain\_mat\'];
-    outputdir = [userdir '\Box Sync\mea_data\rrri_01\processing\rrri\spiketrain\z3s_press\'];
+    outputdir = [userdir '\Box Sync\mea_data\rrri_01\processing\rrri\spiketrain\' dataStruct.DataSet '\'];
 else
     userdir= getenv('HOME');
-    datadir = [userdir '/Box Sync/mea_data/rrri_01/processing/rrri/spiketrain/_mat/'];
-    outputdir = [userdir '/Box Sync/mea_data/rrri_01/processing/rrri/spiketrain/z3s_press/'];
+    datadir = '/home/bailey/Documents/MATLAB/RRRI/_mat';
+    outputdir = ['/home/bailey/Documents/MATLAB/RRRI/' dataStruct.DataSet];
+    %datadir = [userdir '/Box Sync/mea_data/rrri_01/processing/rrri/spiketrain/_mat/'];
+    %outputdir = [userdir '/Box Sync/mea_data/rrri_01/processing/rrri/spiketrain/z3s_press/'];
 end
 %datadir='/home/bailey/Documents/MATLAB/RRRI';
 
@@ -34,7 +36,7 @@ dataStruct.xA=[-1*preEvt:rasterBin:postEvt];
 dataStruct.fileNameList = {};
 for timepointIDX = 1:2
     dataStruct.fileNameList{timepointIDX} = genFileNameList;
-    dataStruct.timepoint = timepointList{timepointIDX}; 
+    %timepoint = timepointList{timepointIDX}; 
     for scheduleIDX=1:2
         curField=[scheduleList{scheduleIDX} timepointList{timepointIDX}];
         bEvt=[scheduleList{scheduleIDX} '_' eventTypeMkPeri];
@@ -44,8 +46,9 @@ for timepointIDX = 1:2
     end
 end
 dataStruct=DPrime_2Conditions(dataStruct ,eventTypeDPrime,{'LL04', 'RL04', 'LL10', 'RL10'});
-save([outputdir dataStruct.DataSet], dataStruct);
-
+cd (outputdir);
+save( dataStruct.DataSet, 'dataStruct');
+export(dataStruct.output.dataSet, 'File', [dataStruct.DataSet '.csv'], 'Delimiter', ',');
 %% Helper Functions
     function fileNameList = genFileNameList()
         cd (datadir);

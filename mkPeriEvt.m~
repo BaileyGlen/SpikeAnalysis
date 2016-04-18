@@ -161,7 +161,7 @@ for XX=1:numFiles
         k=strcmp('RF',behaveEvt_Raw);
         hld=behaveEvtTm_Raw(k);
     else    % assumes 'R' for reinforcer
-        k=strmatch(evtTrigger,behaveEvt_Raw);
+
         if isempty(k)
             if strcmp(evtTrigger(1:2),'RL')
                 evtTrigger(1:2) = 'RR';

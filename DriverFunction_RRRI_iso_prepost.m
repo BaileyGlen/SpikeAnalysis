@@ -1,4 +1,4 @@
-function [ dataStruct ] = DriverFunction_RRRI_rfdel_z3s_press(  )
+function [ dataStruct ] = DriverFunction_RRRI_iso_prepost(  )
 %FilesAndSettings This is used to initialize all the various settings, in order to
 %have a single place to control them from
 %   This is a basic function to set up all the settings for feeding into
@@ -7,10 +7,10 @@ function [ dataStruct ] = DriverFunction_RRRI_rfdel_z3s_press(  )
 
 %% Settings for creating the perievent mtx
 
-dataStruct.DataSet='rfdel_z3s_press';
+dataStruct.DataSet='iso_prepost';
 dataStruct.SessionType = 'RRRI';
-eventTypeMkPeri='R'; 
-eventTypeDPrime='P2';
+eventTypeMkPeri='I'; 
+eventTypeDPrime='P';
 preEvt=3;            % time prior to Event in sec
 postEvt=3;           % time post Event in sec
 rasterBin=.1;      % Size of bines for raster
