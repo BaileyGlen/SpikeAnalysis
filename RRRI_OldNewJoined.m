@@ -18,7 +18,7 @@ end
 % Get the current folder name
 originaldir = cd;
 %set to the data dir
-cd ([datadir 'OldStruct' filesep]);
+cd ([datadir 'ChrisStyle' filesep]);
 %fileNameStruct = dir(['*D' timepointList{timepointIDX} '*.mat']);
 % Get the names of the files in the directory
 fileStruct = dir('*.mat');

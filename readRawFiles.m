@@ -65,7 +65,7 @@ newOfiName=[OpenedFile outputVer '.ofi'];
 %Function calls
 readMedPC();
 readMCD();
-IDClippingArtifact(); %remove this for future files
+%IDClippingArtifact(); %remove this for future files
 MCDMedPCSync();
 
 %% ----------Saving Files-------------------------------------------------
