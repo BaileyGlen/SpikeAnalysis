@@ -65,7 +65,7 @@ newOfiName=[OpenedFile outputVer '.ofi'];
 %Function calls
 readMedPC();
 readMCD();
-%IDClippingArtifact(); %remove this for future files
+IDClippingArtifact(); %remove this for future files
 MCDMedPCSync();
 
 %% ----------Saving Files-------------------------------------------------
@@ -265,7 +265,7 @@ save(newMCDStructName, 'data');
         %the 1st entity is the sync pulse signal
         %the 18th-33rd are the individual channels
         data.Freq = 1/FileInfo.TimeStampResolution;
-        [nsresult,data.EventData,~,~] = ns_GetEventData(hfile,2,[1:2:EntityInfo(2).ItemCount]);
+        [nsresult,data.EventData,~,~] = ns_GetEventData(hfile,3,[1:2:EntityInfo(3).ItemCount]);
         startIDX = data.EventData(1) * data.Freq;
         % Read in Sync Single
         data.EventData = data.EventData (2:length(data.EventData),:) - data.EventData(1);

@@ -43,7 +43,6 @@ for groupIDX=1:length(groupList); % if this were like, data.CondList{}, it could
     numRows = size(data.(curVar).MlMtx,1);
     struct4dataset.SessionType = cell(numRows,1);
     struct4dataset.Schedule = cell(numRows,1);
-    struct4dataset.timepoint = cell(numRows,1);
     struct4dataset.AnimalID = cell(numRows,1);
     struct4dataset.CellID = cell(numRows,1);
     struct4dataset.numEvents = nan(numRows,1);
@@ -57,6 +56,7 @@ for groupIDX=1:length(groupList); % if this were like, data.CondList{}, it could
     %% Fill In some dataset values
     struct4dataset.SessionType(:) = {data.SessionType};
     if strcmp( data.SessionType, 'RRRI' )
+        struct4dataset.timepoint = cell(numRows,1);
         struct4dataset.timepoint(:) = {curVar(3:4)};
         struct4dataset.Schedule(:) = {curVar(1:2)};
     else
@@ -253,9 +253,9 @@ end
 if strcmp(data.SessionType, 'RRRI')
     data.output.dataSet=[data.LL04.dataSet; data.RL04.dataSet; ...
                          data.LL10.dataSet; data.RL10.dataSet];
-else data.output.dataSet=[data.LL04.dataSet; data.RL04.dataSet];
+    data.output.dataSet.timepoint = nominal(data.output.dataSet.timepoint);
+else data.output.dataSet=[data.LL.dataSet; data.RL.dataSet];
 end
-data.output.dataSet.timepoint = nominal(data.output.dataSet.timepoint);
 data.output.dataSet.SessionType = nominal(data.output.dataSet.SessionType);
 data.output.dataSet.Schedule = nominal(data.output.dataSet.Schedule);
 data.output.dataSet.AnimalID = nominal(data.output.dataSet.AnimalID);

@@ -157,7 +157,7 @@ for XX=1:numFiles
         %         k=cellfun(@(y) isempty(y), arrayfun (@(x) find(Other_ts>(x-3) & Other_ts<(x+3) & abs(Other_ts-x)>.0001), Press_ts, 'UniformOutput', false)  );
         %         hld=Press_ts(k);
         %         postEvt=3;
-        %% Reinforcer Delivery
+        %% Reinforcer Delivery - rr= random ratio
     elseif strcmp(evtTrigger(4:end),'Sucrose')
         k=strcmp('RF',behaveEvt_Raw);
         hld=behaveEvtTm_Raw(k);
@@ -165,6 +165,7 @@ for XX=1:numFiles
         k=strmatch(evtTrigger,behaveEvt_Raw);
         if isempty(k)
             if strcmp(evtTrigger(1:2),'RL')
+                origTrigger = evtTrigger;
                 evtTrigger(1:2) = 'RR';
                 display('Had to correct one RL to RR');
                 k=strcmp(evtTrigger,behaveEvt_Raw);
@@ -174,6 +175,9 @@ for XX=1:numFiles
         if strcmp(evtTrigger(4), 'R')
             k2=strcmp([evtTrigger(1:3) 'U'], behaveEvt_Raw);
             hld2=behaveEvtTm_Raw(k2);
+        end
+        if exist('origTrigger') 
+            evtTrigger = origTrigger;
         end
     else
         error(['The evtTrigger provided is inaccurate:,' evtTrigger]);

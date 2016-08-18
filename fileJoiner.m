@@ -22,7 +22,7 @@ function fileJoiner(filenameTXT,filenameMAT)
 %             'Is there a header?']);
 
 
-display(['Joining ' filenameMAT]);
+display(['Joining ']);
 
 % http://regexr.com/
 % Parse the Filename

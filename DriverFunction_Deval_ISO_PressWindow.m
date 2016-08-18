@@ -15,7 +15,7 @@ preEvt=3;            % time prior to Event in sec
 postEvt=3;           % time post Event in sec
 rasterBin=.1;      % Size of bines for raster
 scheduleList={'LL','RL'};
-folderLocation='/home/bailey/Documents/MATLAB/Deval';
+folderLocation='C:\Users\Jacqui\Box Sync\mea_data\rrri_01\processing\deval\spiketrain\_mat\';
 
 %% Create the data Structure
 dataStruct.xA=[-1*preEvt:rasterBin:postEvt];
