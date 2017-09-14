@@ -29,9 +29,9 @@ for groupIDX=1:length(groupList); % if this were like, data.CondList{}, it could
         data.preRange=data.xA>=8 & data.xA<=13;
         data.postRange=data.xA>=0 & data.xA<=5;
     elseif strcmp(type,'P2')
-        data.preRange= (data.xA>= -3.0 & data.xA< -0.5) ...
+        data.preRange= (data.xA>= -3.0 & data.xA< 0) ...
                      | (data.xA> 0.5 & data.xA<= 3.0);
-        data.postRange=data.xA>= -0.5 & data.xA<= 0.5;
+        data.postRange=data.xA>= 0 & data.xA<= 0.5;
     elseif (type=='P' || type=='I') %Press
         data.preRange=data.xA>=-3 & data.xA<=0;
         data.postRange=data.xA>=0 & data.xA<=3;

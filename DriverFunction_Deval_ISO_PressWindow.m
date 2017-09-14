@@ -15,7 +15,9 @@ preEvt=3;            % time prior to Event in sec
 postEvt=3;           % time post Event in sec
 rasterBin=.1;      % Size of bines for raster
 scheduleList={'LL','RL'};
-folderLocation='C:\Users\Jacqui\Box Sync\mea_data\rrri_01\processing\deval\spiketrain\_mat\';
+userdir= getenv('USERPROFILE');
+    datadir = [userdir '\Box Sync\mea_data\rrri_01\processing\deval\spiketrain\_mat\'];
+    outputdir = [userdir '\Box Sync\mea_data\rrri_01\processing\deval\spiketrain\' dataStruct.DataSet '\'];
 
 %% Create the data Structure
 dataStruct.xA=[-1*preEvt:rasterBin:postEvt];
@@ -27,12 +29,14 @@ for scheduleIDX=1:2
     dataStruct.(curField)=getPeriEvent(bEvt,dataStruct.fileNameList(scheduleIDX,:),preEvt,postEvt,rasterBin);
     %dataStruct.(curField)=getPCA(dataStruct.(curField));
 end
-dataStruct=DPrime_2Conditions(dataStruct ,eventTypeDPrime);
-
+dataStruct=DPrime_2Conditions(dataStruct ,eventTypeDPrime, {'LL', 'RL'});
+cd (outputdir);
+save( dataStruct.DataSet, 'dataStruct');
+export(dataStruct.output.dataSet, 'File', [dataStruct.DataSet '.csv'], 'Delimiter', ',');
 
 %% Helper Functions
     function fileNameList = genFileNameList()
-        cd (folderLocation);
+        cd (datadir);
         fileNameStruct = dir('*RI*final*');
         for fileIDX = 1:length(fileNameStruct)
             fileNameList{1,fileIDX} = fileNameStruct(fileIDX).name;

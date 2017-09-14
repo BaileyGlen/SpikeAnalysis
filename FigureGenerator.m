@@ -94,7 +94,7 @@ for timepointIDX=1:length(timepointList)
     %     set(gca,'Linewidth',.75);
     
     axis on;
-    box on;
+    box off;
     
     
     %     %subplot(2,1,condIDX);
